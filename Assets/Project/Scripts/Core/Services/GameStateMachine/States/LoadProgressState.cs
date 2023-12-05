@@ -1,31 +1,25 @@
 using UnityEngine;
 
-using ZombieVsMatch3.UI;
+using ZombieVsMatch3.Core.Services.Progress;
 
 namespace ZombieVsMatch3.Core.Services.GameStateMachine.States
 {
     public class LoadProgressState : IState
     {
-        private readonly GameStateMachine _gameStateMachine;
-        private readonly CoroutineContainer.CoroutineContainer _coroutineContainer;
-        private readonly LoadingCurtain _curtain;
+        private readonly IProgressProviderService _progressProviderService;
 
-        public LoadProgressState(GameStateMachine gameStateMachine, CoroutineContainer.CoroutineContainer coroutineContainer, LoadingCurtain curtain)
+        public LoadProgressState(IProgressProviderService progressProviderService)
         {
-            _gameStateMachine = gameStateMachine;
-            _coroutineContainer = coroutineContainer;
-            _curtain = curtain;
+            _progressProviderService = progressProviderService;
         }
 
         public void Enter()
         {
-            Debug.Log($"Start state { GetType() }");
-            _gameStateMachine.Enter<LoadSceneState>();
+            Debug.Log($"Start state { GetType().Name }");
+            
+            _progressProviderService.LoadProgress();
         }
 
-        public void Exit()
-        {
-            _curtain.Hide(_coroutineContainer);
-        }
+        public void Exit() {}
     }
 }

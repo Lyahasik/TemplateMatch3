@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 using ZombieVsMatch3.Core.Initialize;
 using ZombieVsMatch3.Core.Services.GameStateMachine.States;
+using ZombieVsMatch3.Core.Services.Progress;
+using ZombieVsMatch3.Core.Services.Scene;
 
 namespace ZombieVsMatch3.Core.Services.GameStateMachine
 {
@@ -19,13 +21,16 @@ namespace ZombieVsMatch3.Core.Services.GameStateMachine
             _gameData = gameData;
         }
 
-        public void Instantiate()
+        public void Initialize()
         {
             _states = new Dictionary<Type, IOutputState>
             {
-                [typeof(InitializeGameState)] = new InitializeGameState(_gameData.Curtain),
-                [typeof(LoadProgressState)] = new LoadProgressState(this, _gameData.CoroutineContainer, _gameData.Curtain),
-                [typeof(LoadSceneState)] = new LoadSceneState(_gameData.CoroutineContainer, _gameData.Curtain)
+                [typeof(LoadProgressState)] = new LoadProgressState(_gameData.ServicesContainer.Single<IProgressProviderService>()),
+                [typeof(LoadSceneState)] = new LoadSceneState(
+                    _gameData.ServicesContainer.Single<ISceneProviderService>(),
+                    _gameData.CoroutinesContainer,
+                    _gameData.Curtain),
+                [typeof(MainMenuState)] = new MainMenuState()
             };
         }
     

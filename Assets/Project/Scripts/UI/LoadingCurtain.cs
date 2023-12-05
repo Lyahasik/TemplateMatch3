@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-using ZombieVsMatch3.Core.CoroutineContainer;
+using ZombieVsMatch3.Core.Coroutines;
 
 namespace ZombieVsMatch3.UI
 {
@@ -23,7 +23,7 @@ namespace ZombieVsMatch3.UI
             curtain.alpha = 1;
         }
 
-        public void Hide(CoroutineContainer container) =>
+        public void Hide(CoroutinesContainer container) =>
             container.StartCoroutine(DoFadeIn());
 
         private IEnumerator DoFadeIn()
