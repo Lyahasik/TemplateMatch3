@@ -11,6 +11,8 @@ namespace ZombieVsMatch3.Core.Services.Scene
 {
     public class SceneProviderService : ISceneProviderService
     {
+        private const string SceneMainMenuName = "MainMenu";
+        
         private readonly IGameStateMachine _gameStateMachine;
         private readonly IUIFactory _uiFactory;
 
@@ -24,22 +26,25 @@ namespace ZombieVsMatch3.Core.Services.Scene
             _uiFactory = uiFactory;
         }
 
-        public void LoadMainScene(string sceneName)
+        public void LoadMainScene()
         {
             Debug.Log("Current active scene : " + SceneManager.GetActiveScene().name);
 
             if (_isMainMenuInit)
             {
+                _gameStateMachine.Enter<LoadSceneState>();
+                
                 PrepareMainMenu();
                 return;
             }
 
-            LoadScene(sceneName, PrepareMainMenuScene);
+            LoadScene(SceneMainMenuName, PrepareMainMenuScene);
         }
 
         public void LoadLevel(string sceneName)
         {
             Debug.Log("Current active scene : " + SceneManager.GetActiveScene().name);
+            _gameStateMachine.Enter<LoadSceneState>();
             
             LoadScene(sceneName, PrepareLevelScene);
         }
@@ -50,11 +55,6 @@ namespace ZombieVsMatch3.Core.Services.Scene
             SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive).completed += prepareScene;
         }
 
-        private void PrepareLevelScene(AsyncOperation obj)
-        {
-            
-        }
-        
         private void PrepareMainMenuScene(AsyncOperation obj)
         {
             PrepareMainMenu();
@@ -64,7 +64,9 @@ namespace ZombieVsMatch3.Core.Services.Scene
 
         private void PrepareMainMenu()
         {
+            string oldSceneName = SceneManager.GetActiveScene().name;
             SceneManager.SetActiveScene(SceneManager.GetSceneByName(_nameNewActiveScene));
+            SceneManager.UnloadSceneAsync(oldSceneName);
             Debug.Log("New active scene : " + SceneManager.GetActiveScene().name);
 
             MainMenu mainMenu = _uiFactory.CreateMainMenu();
@@ -73,6 +75,19 @@ namespace ZombieVsMatch3.Core.Services.Scene
             
             Debug.Log("Main scene loaded.");
             _gameStateMachine.Enter<MainMenuState>();
+        }
+
+        private void PrepareLevelScene(AsyncOperation obj)
+        {
+            SceneManager.SetActiveScene(SceneManager.GetSceneByName(_nameNewActiveScene));
+            Debug.Log("New active scene : " + SceneManager.GetActiveScene().name);
+
+            Hud hud = _uiFactory.CreateHUD();
+            hud.Construct(this);
+            hud.Initialize();
+            
+            Debug.Log("Level scene loaded.");
+            _gameStateMachine.Enter<GameplayState>();
         }
     }
 }

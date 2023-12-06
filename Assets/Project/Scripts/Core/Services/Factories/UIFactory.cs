@@ -18,5 +18,12 @@ namespace ZombieVsMatch3.Core.Services.Factories
 
             return mainMenu;
         }
+
+        public Hud CreateHUD()
+        {
+            Hud hud = _assetProvider.Instantiate(AssetPath.UIHUD).GetComponent<Hud>();
+
+            return hud;
+        }
     }
 }

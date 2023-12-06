@@ -5,14 +5,12 @@ using ZombieVsMatch3.Core.Services.Scene;
 
 namespace ZombieVsMatch3.UI
 {
-    public class MainMenu : MonoBehaviour
+    public class Hud : MonoBehaviour
     {
-        private const string SceneName = "Level1";
-
         private ISceneProviderService _sceneProviderService;
-        
-        [SerializeField] private Button buttonStartGame;
 
+        [SerializeField] private Button buttonMenu;
+        
         public void Construct(ISceneProviderService sceneProviderService)
         {
             _sceneProviderService = sceneProviderService;
@@ -20,12 +18,12 @@ namespace ZombieVsMatch3.UI
 
         public void Initialize()
         {
-            buttonStartGame.onClick.AddListener(LoadLevel);
+            buttonMenu.onClick.AddListener(LoadLevel);
         }
-
+        
         private void LoadLevel()
         {
-            _sceneProviderService.LoadLevel(SceneName);
+            _sceneProviderService.LoadMainScene();
         }
     }
 }
