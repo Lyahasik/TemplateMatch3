@@ -17,7 +17,6 @@ namespace ZombieVsMatch3.Gameplay.Match3
         {
             for (int i = 0; i < rows.Count; i++)
             {
-                spawns[i].Construct(definingConnectionsMatch3Service);
                 spawns[i].Initialize();
                 
                 rows[i].Construct(spawns[i]);

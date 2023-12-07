@@ -1,32 +1,22 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace ZombieVsMatch3.Gameplay.Match3
 {
     public class Cell : MonoBehaviour
     {
-        [SerializeField] private Image icon;
+        [SerializeField] private Stone stone;
 
         private Color _reserveColor;
-
+        
         public Color Color => _reserveColor;
-
-        public string GetColorName()
-        {
-            if (icon.color == Color.blue)
-                return "blue";
-            if (icon.color == Color.green)
-                return "green";
-            
-            return "red";
-        }
         
         public void ReserveColor(Color color) => 
             _reserveColor = color;
-        
-        public void SetColor()
+
+        public void TakeStone(Vector3 dispensingPosition)
         {
-            icon.color = _reserveColor;
+            stone.SetColor(_reserveColor);
+            stone.StartMovingIntoCell(dispensingPosition, transform.position);
         }
     }
 }

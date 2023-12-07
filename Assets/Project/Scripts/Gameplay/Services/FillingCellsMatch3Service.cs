@@ -28,33 +28,7 @@ namespace ZombieVsMatch3.Gameplay.Services
             RecordingCells(field);
             RecordingSpawns(field);
             FillingCells();
-        }
-
-        private void FillingCells()
-        {
-            for (int y = 0; y < _fieldData.Height; y++)
-            {
-                for (int x = 0; x < _fieldData.Width; x++)
-                {
-                    Vector2Int position = new(x, y);
-                    
-                    int id = Random.Range(0, types.Count);
-                    while (_definingConnectionsMatch3Service.IsFormAssembled(_fieldData, position, types[id]))
-                    {
-                        id = Random.Range(0, types.Count);
-                    }
-                    
-                    _fieldData.Cells[x, y].ReserveColor(types[id]);
-                    _fieldData.Spawns[x].CellPuttingInQueueDelivery(_fieldData.Cells[x, y]);
-                }
-            }
-
-            foreach (DistributorStones spawnStonePoint in _fieldData.Spawns)
-            {
-                spawnStonePoint.DistributeStones();
-            }
-
-            DebugCellsValue();
+            DistributeStones();
         }
 
         private void RecordingCells(FieldMatch3 field)
@@ -81,21 +55,32 @@ namespace ZombieVsMatch3.Gameplay.Services
             }
         }
 
-        private void DebugCellsValue()
+        private void FillingCells()
         {
-            string values = string.Empty;
-            
             for (int y = 0; y < _fieldData.Height; y++)
             {
                 for (int x = 0; x < _fieldData.Width; x++)
                 {
-                    values += $"{x}.{y} {_fieldData.Cells[x, y].GetColorName()} ";
+                    Vector2Int position = new(x, y);
+                    
+                    int id = Random.Range(0, types.Count);
+                    while (_definingConnectionsMatch3Service.IsFormAssembled(_fieldData, position, types[id]))
+                    {
+                        id = Random.Range(0, types.Count);
+                    }
+                    
+                    _fieldData.Cells[x, y].ReserveColor(types[id]);
+                    _fieldData.Spawns[x].CellPuttingInQueueDelivery(_fieldData.Cells[x, y]);
                 }
-
-                values += "\n";
             }
+        }
 
-            Debug.Log(values);
+        private void DistributeStones()
+        {
+            foreach (DistributorStones spawnStonePoint in _fieldData.Spawns)
+            {
+                spawnStonePoint.DistributeStones();
+            }
         }
     }
 }

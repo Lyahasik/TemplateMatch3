@@ -11,8 +11,10 @@ GameObject:
   - component: {fileID: 9160432781759857021}
   - component: {fileID: 8058190489055813481}
   - component: {fileID: 4390616748578118754}
+  - component: {fileID: 1533493006194951712}
+  - component: {fileID: 8739078434219880184}
   m_Layer: 5
-  m_Name: Icon
+  m_Name: Stone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -58,7 +60,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -75,6 +77,33 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1533493006194951712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5355780792011696847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad9c3274312746ffaa626cd968d4f0ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  icon: {fileID: 4390616748578118754}
+  movingIntoCell: {fileID: 8739078434219880184}
+--- !u!114 &8739078434219880184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5355780792011696847}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9db001d18f3041ed924e415058a20611, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _speed: 1
 --- !u!1 &8511463691941243728
 GameObject:
   m_ObjectHideFlags: 0
@@ -85,7 +114,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8511463691941243729}
   - component: {fileID: 8511463691941243731}
-  - component: {fileID: 8511463691941243730}
   - component: {fileID: 1604694787909222461}
   m_Layer: 5
   m_Name: Cell
@@ -122,36 +150,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8511463691941243728}
   m_CullTransparentMesh: 1
---- !u!114 &8511463691941243730
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8511463691941243728}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.6320754, g: 0.39027423, b: 0.19975968, a: 1}
-  m_RaycastTarget: 0
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 42b84ad3942797d43ba3088874fe8554, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!114 &1604694787909222461
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,4 +162,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b53545a8ec62d8f4287b8b0b45e1acee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 4390616748578118754}
+  stone: {fileID: 1533493006194951712}
