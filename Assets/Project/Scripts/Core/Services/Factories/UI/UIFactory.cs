@@ -1,7 +1,7 @@
 using ZombieVsMatch3.Core.Services.Assets;
 using ZombieVsMatch3.UI;
 
-namespace ZombieVsMatch3.Core.Services.Factories
+namespace ZombieVsMatch3.Core.Services.Factories.UI
 {
     public class UIFactory : IUIFactory
     {

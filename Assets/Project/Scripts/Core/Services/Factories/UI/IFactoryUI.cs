@@ -1,6 +1,6 @@
 using ZombieVsMatch3.UI;
 
-namespace ZombieVsMatch3.Core.Services.Factories
+namespace ZombieVsMatch3.Core.Services.Factories.UI
 {
     public interface IUIFactory : IService
     {
