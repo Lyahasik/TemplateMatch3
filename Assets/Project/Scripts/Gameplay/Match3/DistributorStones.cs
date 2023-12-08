@@ -1,26 +1,58 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using ZombieVsMatch3.Extensions;
+
 namespace ZombieVsMatch3.Gameplay.Match3
 {
+    [RequireComponent(typeof(RectTransform))]
     public class DistributorStones : MonoBehaviour
     {
-        private Queue<Cell> _deliveryQueue;
+        private RectTransform _rect;
+        
+        private Queue<CellUpdateStone> _deliveryQueue;
+        private CellUpdateStone _currentCell;
+        private RectTransform _rectStone;
 
-        public void Initialize()
+        private void Awake() => 
+            _rect = GetComponent<RectTransform>();
+
+        private void Update() => 
+            GiveOutNextStone();
+
+        public void Initialize() => 
+            _deliveryQueue = new Queue<CellUpdateStone>();
+
+        public void CellPuttingInQueueDelivery(CellUpdateStone cellUpdateStone) => 
+            _deliveryQueue.Enqueue(cellUpdateStone);
+
+        public void StartDistribute()
         {
-            _deliveryQueue = new Queue<Cell>();
+            GiveOutStone();
         }
 
-        public void CellPuttingInQueueDelivery(Cell cell)
+        private void GiveOutNextStone()
         {
-            _deliveryQueue.Enqueue(cell);
+            if (_currentCell == null)
+                return;
+
+            if (!_rectStone.IsIntersectingRectangles(_rect))
+            {
+                if (_deliveryQueue.Count == 0)
+                {
+                    _currentCell = null;
+                    return;
+                }
+
+                GiveOutStone();
+            }
         }
 
-        public void DistributeStones()
+        private void GiveOutStone()
         {
-            foreach (Cell cell in _deliveryQueue)
-                cell.TakeStone(transform.position);
+            _currentCell = _deliveryQueue.Dequeue();
+            _currentCell.TakeStone(transform.position);
+            _rectStone = _currentCell.Stone.Rect;
         }
     }
 }

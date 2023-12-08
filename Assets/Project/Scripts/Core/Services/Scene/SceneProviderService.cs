@@ -7,7 +7,7 @@ using ZombieVsMatch3.Core.Services.Factories.UI;
 using ZombieVsMatch3.Core.Services.GameStateMachine;
 using ZombieVsMatch3.Core.Services.GameStateMachine.States;
 using ZombieVsMatch3.Gameplay.Match3;
-using ZombieVsMatch3.Gameplay.Services;
+using ZombieVsMatch3.Gameplay.Match3.Services;
 using ZombieVsMatch3.UI;
 
 namespace ZombieVsMatch3.Core.Services.Scene
@@ -21,6 +21,7 @@ namespace ZombieVsMatch3.Core.Services.Scene
         private readonly IGameplayFactory _gameplayFactory;
         private readonly IFillingCellsMatch3Service _fillingCellsMatch3Service;
         private readonly IDefiningConnectionsMatch3Service _definingConnectionsMatch3Service;
+        private readonly IExchangeOfStonesService _exchangeOfStonesService;
 
         private string _nameNewActiveScene;
 
@@ -30,13 +31,15 @@ namespace ZombieVsMatch3.Core.Services.Scene
             IUIFactory uiFactory,
             IGameplayFactory gameplayFactory,
             IFillingCellsMatch3Service fillingCellsMatch3Service,
-            IDefiningConnectionsMatch3Service definingConnectionsMatch3Service)
+            IDefiningConnectionsMatch3Service definingConnectionsMatch3Service,
+            IExchangeOfStonesService exchangeOfStonesService)
         {
             _gameStateMachine = gameStateMachine;
             _uiFactory = uiFactory;
             _gameplayFactory = gameplayFactory;
             _fillingCellsMatch3Service = fillingCellsMatch3Service;
             _definingConnectionsMatch3Service = definingConnectionsMatch3Service;
+            _exchangeOfStonesService = exchangeOfStonesService;
         }
 
         public void LoadMainScene()
@@ -106,7 +109,7 @@ namespace ZombieVsMatch3.Core.Services.Scene
         {
             FieldMatch3 fieldMatch3 = _gameplayFactory.CreateMatch3();
             fieldMatch3.transform.SetParent(hud.transform, false);
-            fieldMatch3.Initialize(_definingConnectionsMatch3Service);
+            fieldMatch3.Initialize(_exchangeOfStonesService);
             
             _fillingCellsMatch3Service.Initialize(fieldMatch3);
         }

@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-using ZombieVsMatch3.Gameplay.Match3;
-
-namespace ZombieVsMatch3.Gameplay.Services
+namespace ZombieVsMatch3.Gameplay.Match3.Services
 {
     public class FillingCellsMatch3Service : IFillingCellsMatch3Service
     {
@@ -36,12 +34,13 @@ namespace ZombieVsMatch3.Gameplay.Services
             _fieldData.Width = field.Rows.Count;
             _fieldData.Height = field.Rows[0].Cells.Count;
             
-            _fieldData.Cells = new Cell[_fieldData.Width, _fieldData.Height];
+            _fieldData.Cells = new CellUpdateStone[_fieldData.Width, _fieldData.Height];
             for (int y = 0; y < _fieldData.Height; y++)
             {
                 for (int x = 0; x < _fieldData.Width; x++)
                 {
                     _fieldData.Cells[x, y] = field.Rows[x].Cells[y];
+                    _fieldData.Cells[x, y].IdPosition = new Vector2Int(x, y);
                 }
             }
         }
@@ -61,16 +60,16 @@ namespace ZombieVsMatch3.Gameplay.Services
             {
                 for (int x = 0; x < _fieldData.Width; x++)
                 {
-                    Vector2Int position = new(x, y);
+                    CellUpdateStone cell = _fieldData.Cells[x, y];
                     
                     int id = Random.Range(0, types.Count);
-                    while (_definingConnectionsMatch3Service.IsFormAssembled(_fieldData, position, types[id]))
+                    while (_definingConnectionsMatch3Service.IsFormAssembled(_fieldData, cell.IdPosition, types[id]))
                     {
                         id = Random.Range(0, types.Count);
                     }
                     
-                    _fieldData.Cells[x, y].ReserveColor(types[id]);
-                    _fieldData.Spawns[x].CellPuttingInQueueDelivery(_fieldData.Cells[x, y]);
+                    cell.ReserveColor(types[id]);
+                    _fieldData.Spawns[x].CellPuttingInQueueDelivery(cell);
                 }
             }
         }
@@ -79,7 +78,7 @@ namespace ZombieVsMatch3.Gameplay.Services
         {
             foreach (DistributorStones spawnStonePoint in _fieldData.Spawns)
             {
-                spawnStonePoint.DistributeStones();
+                spawnStonePoint.StartDistribute();
             }
         }
     }

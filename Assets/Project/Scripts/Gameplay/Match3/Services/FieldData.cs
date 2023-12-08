@@ -1,11 +1,9 @@
-using ZombieVsMatch3.Gameplay.Match3;
-
-namespace ZombieVsMatch3.Gameplay.Services
+namespace ZombieVsMatch3.Gameplay.Match3.Services
 {
     public struct FieldData
     {
         public DistributorStones[] Spawns;
-        public Cell[,] Cells;
+        public CellUpdateStone[,] Cells;
             
         public int Width;
         public int Height;

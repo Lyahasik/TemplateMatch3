@@ -1,21 +1,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using ZombieVsMatch3.Gameplay.Match3.Services;
+
 namespace ZombieVsMatch3.Gameplay.Match3
 {
     public class Row : MonoBehaviour
     {
-        [SerializeField] private List<Cell> cells;
-        
-        private DistributorStones _distributorStones;
+        [SerializeField] private List<CellUpdateStone> cells;
 
-        public List<Cell> Cells => cells;
+        public List<CellUpdateStone> Cells => cells;
 
-        public void Construct(DistributorStones distributorStones)
+        public void Initialize(IExchangeOfStonesService exchangeOfStonesService, FieldMatch3ActiveArea fieldMatch3ActiveArea)
         {
-            _distributorStones = distributorStones;
+            foreach (CellUpdateStone cell in Cells)
+            {
+                cell.ProcessingCellClick.Construct(exchangeOfStonesService);
+                cell.ProcessingCellClick.Subscribe(fieldMatch3ActiveArea);
+            }
         }
-        
-        public void Initialize() {}
     }
 }
