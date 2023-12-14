@@ -90,7 +90,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   icon: {fileID: 4390616748578118754}
-  movingIntoCell: {fileID: 8739078434219880184}
+  movingIntoTarget: {fileID: 8739078434219880184}
 --- !u!114 &8739078434219880184
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,7 +103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9db001d18f3041ed924e415058a20611, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 500
+  speed: 500
 --- !u!1 &8511463691941243728
 GameObject:
   m_ObjectHideFlags: 0

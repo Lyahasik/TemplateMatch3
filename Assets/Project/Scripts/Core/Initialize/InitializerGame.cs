@@ -9,6 +9,7 @@ using ZombieVsMatch3.Core.Services.GameStateMachine;
 using ZombieVsMatch3.Core.Services.GameStateMachine.States;
 using ZombieVsMatch3.Core.Services.Progress;
 using ZombieVsMatch3.Core.Services.Scene;
+using ZombieVsMatch3.Gameplay.Match3;
 using ZombieVsMatch3.Gameplay.Match3.Services;
 using ZombieVsMatch3.UI;
 
@@ -50,17 +51,25 @@ namespace ZombieVsMatch3.Core.Initialize
 
             gameData.ServicesContainer.Register<IDefiningConnectionsMatch3Service>(
                 new DefiningConnectionsMatch3Service());
+            gameData.ServicesContainer.Register<ICellActivityCheckService>(new CellActivityCheckService());
+            gameData.ServicesContainer.Register<IStonesDestructionMatch3Service>(new StonesDestructionMatch3Service(
+                _servicesContainer.Single<ICellActivityCheckService>(),
+                _servicesContainer.Single<IDefiningConnectionsMatch3Service>(),
+                gameData.CoroutinesContainer));
             gameData.ServicesContainer.Register<IExchangeOfStonesService>(new ExchangeOfStonesService(
-                _servicesContainer.Single<IDefiningConnectionsMatch3Service>()));
+                _servicesContainer.Single<IDefiningConnectionsMatch3Service>(),
+                _servicesContainer.Single<IStonesDestructionMatch3Service>()));
             gameData.ServicesContainer.Register<IFillingCellsMatch3Service>(new FillingCellsMatch3Service(
-                _servicesContainer.Single<IDefiningConnectionsMatch3Service>()));
+                _servicesContainer.Single<IDefiningConnectionsMatch3Service>(),
+                _servicesContainer.Single<ICellActivityCheckService>(),
+                _servicesContainer.Single<IStonesDestructionMatch3Service>()));
 
             gameData.ServicesContainer.Register<ISceneProviderService>(new SceneProviderService(
                 gameStateMachine,
                 _servicesContainer.Single<IUIFactory>(),
                 _servicesContainer.Single<IGameplayFactory>(),
                 _servicesContainer.Single<IFillingCellsMatch3Service>(),
-                _servicesContainer.Single<IDefiningConnectionsMatch3Service>(),
+                _servicesContainer.Single<ICellActivityCheckService>(),
                 _servicesContainer.Single<IExchangeOfStonesService>()));
 
             gameStateMachine.Initialize();

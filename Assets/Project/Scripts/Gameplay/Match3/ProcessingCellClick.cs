@@ -31,7 +31,8 @@ namespace ZombieVsMatch3.Gameplay.Match3
         
         private void Hit(Vector3 position)
         {
-            if (!_rect.IsDotInside(position))
+            if (cellUpdateStone.IsLock
+                || !_rect.IsDotInside(position))
                 return;
             
             _exchangeOfStonesService.HitCell(cellUpdateStone);

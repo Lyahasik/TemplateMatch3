@@ -5,12 +5,15 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
     public class ExchangeOfStonesService : IExchangeOfStonesService
     {
         private readonly IDefiningConnectionsMatch3Service _definingConnectionsMatch3Service;
-        
+        private readonly IStonesDestructionMatch3Service _stonesDestructionMatch3Service;
+
         private CellUpdateStone _firstCellUpdateStone;
 
-        public ExchangeOfStonesService(IDefiningConnectionsMatch3Service definingConnectionsMatch3Service)
+        public ExchangeOfStonesService(IDefiningConnectionsMatch3Service definingConnectionsMatch3Service,
+            IStonesDestructionMatch3Service stonesDestructionMatch3Service)
         {
             _definingConnectionsMatch3Service = definingConnectionsMatch3Service;
+            _stonesDestructionMatch3Service = stonesDestructionMatch3Service;
         }
 
         public void HitCell(CellUpdateStone cellUpdateStone)
@@ -54,6 +57,7 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
             _firstCellUpdateStone.TakeStone(secondCellUpdateStone.transform.position);
 
             _firstCellUpdateStone = null;
+            _stonesDestructionMatch3Service.TryDestroy();
         }
     }
 }

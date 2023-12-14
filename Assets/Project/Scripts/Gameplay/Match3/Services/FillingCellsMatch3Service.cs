@@ -6,14 +6,20 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
     public class FillingCellsMatch3Service : IFillingCellsMatch3Service
     {
         private readonly IDefiningConnectionsMatch3Service _definingConnectionsMatch3Service;
-        
+        private readonly ICellActivityCheckService _cellActivityCheckService;
+        private readonly IStonesDestructionMatch3Service _stonesDestructionMatch3Service;
+
         private FieldData _fieldData;
-        
+
         private List<Color> types;
 
-        public FillingCellsMatch3Service(IDefiningConnectionsMatch3Service definingConnectionsMatch3Service)
+        public FillingCellsMatch3Service(IDefiningConnectionsMatch3Service definingConnectionsMatch3Service,
+            ICellActivityCheckService cellActivityCheckService,
+            IStonesDestructionMatch3Service stonesDestructionMatch3Service)
         {
             _definingConnectionsMatch3Service = definingConnectionsMatch3Service;
+            _cellActivityCheckService = cellActivityCheckService;
+            _stonesDestructionMatch3Service = stonesDestructionMatch3Service;
         }
 
         public void Initialize(FieldMatch3 field)
@@ -25,6 +31,8 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
             
             RecordingCells(field);
             RecordingSpawns(field);
+            _cellActivityCheckService.Initialize(_fieldData);
+            _definingConnectionsMatch3Service.Initialize(_fieldData);
             FillingCells();
             DistributeStones();
         }
@@ -63,7 +71,7 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
                     CellUpdateStone cell = _fieldData.Cells[x, y];
                     
                     int id = Random.Range(0, types.Count);
-                    while (_definingConnectionsMatch3Service.IsFormAssembled(_fieldData, cell.IdPosition, types[id]))
+                    while (_definingConnectionsMatch3Service.IsFormAssembled(cell.IdPosition, types[id]))
                     {
                         id = Random.Range(0, types.Count);
                     }
@@ -80,6 +88,8 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
             {
                 spawnStonePoint.StartDistribute();
             }
+
+            _stonesDestructionMatch3Service.TryDestroy();
         }
     }
 }

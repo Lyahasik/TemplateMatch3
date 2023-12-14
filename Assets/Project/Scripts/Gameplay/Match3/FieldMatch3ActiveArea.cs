@@ -11,16 +11,22 @@ namespace ZombieVsMatch3.Gameplay.Match3
     public class FieldMatch3ActiveArea : MonoBehaviour, IPointerDownHandler, ISelectHandler, IDeselectHandler
     {
         private IExchangeOfStonesService _exchangeOfStonesService;
-        
+        private ICellActivityCheckService _cellActivityCheckService;
+
         public event Action<Vector3> OnDown;
 
-        public void Construct(IExchangeOfStonesService exchangeOfStonesService)
+        public void Construct(IExchangeOfStonesService exchangeOfStonesService,
+            ICellActivityCheckService cellActivityCheckService)
         {
             _exchangeOfStonesService = exchangeOfStonesService;
+            _cellActivityCheckService = cellActivityCheckService;
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
+            if (!_cellActivityCheckService.IsAllUnlocked())
+                return;
+            
             EventSystem.current.SetSelectedGameObject(gameObject, eventData);
             
             OnDown?.Invoke(eventData.position);

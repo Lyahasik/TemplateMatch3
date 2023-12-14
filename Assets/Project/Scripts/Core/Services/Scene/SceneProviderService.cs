@@ -20,7 +20,7 @@ namespace ZombieVsMatch3.Core.Services.Scene
         private readonly IUIFactory _uiFactory;
         private readonly IGameplayFactory _gameplayFactory;
         private readonly IFillingCellsMatch3Service _fillingCellsMatch3Service;
-        private readonly IDefiningConnectionsMatch3Service _definingConnectionsMatch3Service;
+        private readonly ICellActivityCheckService _cellActivityCheckService;
         private readonly IExchangeOfStonesService _exchangeOfStonesService;
 
         private string _nameNewActiveScene;
@@ -31,14 +31,14 @@ namespace ZombieVsMatch3.Core.Services.Scene
             IUIFactory uiFactory,
             IGameplayFactory gameplayFactory,
             IFillingCellsMatch3Service fillingCellsMatch3Service,
-            IDefiningConnectionsMatch3Service definingConnectionsMatch3Service,
+            ICellActivityCheckService cellActivityCheckService,
             IExchangeOfStonesService exchangeOfStonesService)
         {
             _gameStateMachine = gameStateMachine;
             _uiFactory = uiFactory;
             _gameplayFactory = gameplayFactory;
             _fillingCellsMatch3Service = fillingCellsMatch3Service;
-            _definingConnectionsMatch3Service = definingConnectionsMatch3Service;
+            _cellActivityCheckService = cellActivityCheckService;
             _exchangeOfStonesService = exchangeOfStonesService;
         }
 
@@ -109,7 +109,7 @@ namespace ZombieVsMatch3.Core.Services.Scene
         {
             FieldMatch3 fieldMatch3 = _gameplayFactory.CreateMatch3();
             fieldMatch3.transform.SetParent(hud.transform, false);
-            fieldMatch3.Initialize(_exchangeOfStonesService);
+            fieldMatch3.Initialize(_exchangeOfStonesService, _cellActivityCheckService);
             
             _fillingCellsMatch3Service.Initialize(fieldMatch3);
         }

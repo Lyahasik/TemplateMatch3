@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+
 using ZombieVsMatch3.Gameplay.Match3.Services;
 
 namespace ZombieVsMatch3.Gameplay.Match3
@@ -15,7 +16,7 @@ namespace ZombieVsMatch3.Gameplay.Match3
         public List<DistributorStones> Spawns => spawns;
         public List<Row> Rows => rows;
 
-        public void Initialize(IExchangeOfStonesService exchangeOfStonesService)
+        public void Initialize(IExchangeOfStonesService exchangeOfStonesService, ICellActivityCheckService cellActivityCheckService)
         {
             for (int i = 0; i < rows.Count; i++)
             {
@@ -23,7 +24,7 @@ namespace ZombieVsMatch3.Gameplay.Match3
                 
                 rows[i].Initialize(exchangeOfStonesService, fieldMatch3ActiveArea);
                 
-                fieldMatch3ActiveArea.Construct(exchangeOfStonesService);
+                fieldMatch3ActiveArea.Construct(exchangeOfStonesService, cellActivityCheckService);
             }
         }
     }
