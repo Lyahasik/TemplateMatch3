@@ -4,7 +4,8 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
 {
     public interface IExchangeOfStonesService : IService
     {
-        void HitCell(CellUpdateStone cellUpdateStone);
-        void Deselect();
+        public void HitCell(CellUpdateStone cellUpdateStone);
+        public void StartSwap(bool isBack = false);
+        public void Deselect();
     }
 }

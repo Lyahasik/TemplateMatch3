@@ -1,63 +1,39 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
-using ZombieVsMatch3.Core.Coroutines;
+using ZombieVsMatch3.Gameplay.Match3.StateMachine;
+using ZombieVsMatch3.Gameplay.Match3.StateMachine.States;
 
 namespace ZombieVsMatch3.Gameplay.Match3.Services
 {
     public class StonesDestructionMatch3Service : IStonesDestructionMatch3Service
     {
-        private readonly ICellActivityCheckService _cellActivityCheckService;
+        private readonly IMatch3StateMachine _match3StateMachine;
+        private readonly ICellsStateCheckService _cellsStateCheckService;
         private readonly IDefiningConnectionsMatch3Service _definingConnectionsMatch3Service;
-        private readonly CoroutinesContainer _coroutinesContainer;
 
-        private bool _isBeingChecked;
-
-        public StonesDestructionMatch3Service(ICellActivityCheckService cellActivityCheckService,
-            IDefiningConnectionsMatch3Service definingConnectionsMatch3Service,
-            CoroutinesContainer coroutinesContainer)
+        public StonesDestructionMatch3Service(IMatch3StateMachine match3StateMachine,
+            ICellsStateCheckService cellsStateCheckService,
+            IDefiningConnectionsMatch3Service definingConnectionsMatch3Service)
         {
-            _cellActivityCheckService = cellActivityCheckService;
+            _match3StateMachine = match3StateMachine;
+            _cellsStateCheckService = cellsStateCheckService;
             _definingConnectionsMatch3Service = definingConnectionsMatch3Service;
-            _coroutinesContainer = coroutinesContainer;
         }
 
-        public void TryDestroy()
-        {
-            if (_isBeingChecked)
-                return;
-
-            _isBeingChecked = true;
-            _coroutinesContainer.StartCoroutine(WaitingForReadiness());
-        }
-
-        private IEnumerator WaitingForReadiness()
-        {
-            Debug.Log("Waiting");
-            while (!_cellActivityCheckService.IsAllUnlocked())
-                yield return null;
-
-            TryStartDestroy();
-        }
-
-        private void TryStartDestroy()
+        public void DestroyForms()
         {
             List<CellUpdateStone> cells = _definingConnectionsMatch3Service.GetListForms();
+            _cellsStateCheckService.ExecuteAfterProcessing(FinishWork);
             
-            if (cells != null)
+            foreach (CellUpdateStone cell in cells)
             {
-                foreach (CellUpdateStone cell in cells)
-                {
-                    cell.DestroyStone();
-                }
+                cell.DestroyStone();
             }
-            else
-            {
-                Debug.Log("Not start destroy");
-            }
-            
-            _isBeingChecked = false;
+        }
+
+        private void FinishWork()
+        {
+            _match3StateMachine.Enter<FillingState>();
         }
     }
 }

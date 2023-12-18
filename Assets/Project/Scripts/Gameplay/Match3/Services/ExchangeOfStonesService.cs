@@ -1,19 +1,27 @@
 ﻿using UnityEngine;
 
+using ZombieVsMatch3.Gameplay.Match3.StateMachine;
+using ZombieVsMatch3.Gameplay.Match3.StateMachine.States;
+
 namespace ZombieVsMatch3.Gameplay.Match3.Services
 {
     public class ExchangeOfStonesService : IExchangeOfStonesService
     {
+        private readonly IMatch3StateMachine _match3StateMachine;
         private readonly IDefiningConnectionsMatch3Service _definingConnectionsMatch3Service;
-        private readonly IStonesDestructionMatch3Service _stonesDestructionMatch3Service;
+        private readonly ICellsStateCheckService _cellsStateCheckService;
 
         private CellUpdateStone _firstCellUpdateStone;
+        private CellUpdateStone _secondCellUpdateStone;
+        private bool _isPrepared;
 
-        public ExchangeOfStonesService(IDefiningConnectionsMatch3Service definingConnectionsMatch3Service,
-            IStonesDestructionMatch3Service stonesDestructionMatch3Service)
+        public ExchangeOfStonesService(IMatch3StateMachine match3StateMachine, 
+            IDefiningConnectionsMatch3Service definingConnectionsMatch3Service,
+            ICellsStateCheckService cellsStateCheckService)
         {
+            _match3StateMachine = match3StateMachine;
             _definingConnectionsMatch3Service = definingConnectionsMatch3Service;
-            _stonesDestructionMatch3Service = stonesDestructionMatch3Service;
+            _cellsStateCheckService = cellsStateCheckService;
         }
 
         public void HitCell(CellUpdateStone cellUpdateStone)
@@ -25,7 +33,8 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
             else if (_definingConnectionsMatch3Service.IsNeighboringCells(_firstCellUpdateStone.IdPosition,
                          cellUpdateStone.IdPosition))
             {
-                StartSwap(cellUpdateStone);
+                _secondCellUpdateStone = cellUpdateStone;
+                _match3StateMachine.Enter<SwappingState>();
             }
             else
             {
@@ -34,30 +43,73 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
             }
         }
 
+        public void StartSwap(bool isBack = false)
+        {
+            PrepareSwap();
+            
+            Color oldSecondColor = _secondCellUpdateStone.Color;
+            
+            _secondCellUpdateStone.TakeStone(_firstCellUpdateStone.transform.position, _firstCellUpdateStone.Color);
+            _firstCellUpdateStone.TakeStone(_secondCellUpdateStone.transform.position, oldSecondColor);
+
+            if (isBack)
+                Reset();
+        }
+
+        private void PrepareSwap()
+        {
+            if (_isPrepared)
+                return;
+            
+            Debug.Log($"add {nameof(TryStartDestroyed)}");
+            _cellsStateCheckService.ExecuteAfterProcessing(TryStartDestroyed);
+            _isPrepared = true;
+        }
+
+        public void Deselect()
+        {
+            _firstCellUpdateStone?.Deselect();
+            Reset();
+        }
+
+        private void TryStartDestroyed()
+        {
+            Debug.Log("try start destroy");
+            if (_definingConnectionsMatch3Service.IsFormAssembled(_firstCellUpdateStone.IdPosition,
+                    _firstCellUpdateStone.Color)
+                || _definingConnectionsMatch3Service.IsFormAssembled(_secondCellUpdateStone.IdPosition,
+                    _secondCellUpdateStone.Color))
+            {
+                Reset();
+                _match3StateMachine.Enter<DestructionState>();
+            }
+            else
+            {
+                
+                Debug.Log($"add {nameof(EnableSelection)}");
+                _cellsStateCheckService.ExecuteAfterProcessing(EnableSelection);
+                StartSwap(true);
+            }
+        }
+
+        private void EnableSelection()
+        {
+            Debug.Log("start selection state");
+            _match3StateMachine.Enter<SelectionState>();
+        }
+
         private void SetFirstCell(CellUpdateStone cellUpdateStone)
         {
             _firstCellUpdateStone = cellUpdateStone;
             _firstCellUpdateStone.Select();
         }
 
-        public void Deselect()
+        private void Reset()
         {
-            _firstCellUpdateStone?.Deselect();
             _firstCellUpdateStone = null;
-        }
+            _secondCellUpdateStone = null;
 
-        private void StartSwap(CellUpdateStone secondCellUpdateStone)
-        {
-            Color oldSecondColor = secondCellUpdateStone.Color;
-            
-            secondCellUpdateStone.ReserveColor(_firstCellUpdateStone.Color);
-            secondCellUpdateStone.TakeStone(_firstCellUpdateStone.transform.position);
-            
-            _firstCellUpdateStone.ReserveColor(oldSecondColor);
-            _firstCellUpdateStone.TakeStone(secondCellUpdateStone.transform.position);
-
-            _firstCellUpdateStone = null;
-            _stonesDestructionMatch3Service.TryDestroy();
+            _isPrepared = false;
         }
     }
 }

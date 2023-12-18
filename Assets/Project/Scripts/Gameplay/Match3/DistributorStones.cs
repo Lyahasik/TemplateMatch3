@@ -9,7 +9,7 @@ namespace ZombieVsMatch3.Gameplay.Match3
     public class DistributorStones : MonoBehaviour
     {
         private RectTransform _rect;
-        
+
         private Queue<CellUpdateStone> _deliveryQueue;
         private CellUpdateStone _currentCell;
         private RectTransform _rectStone;
@@ -19,17 +19,15 @@ namespace ZombieVsMatch3.Gameplay.Match3
 
         private void Update() => 
             GiveOutNextStone();
-
+        
         public void Initialize() => 
             _deliveryQueue = new Queue<CellUpdateStone>();
 
         public void CellPuttingInQueueDelivery(CellUpdateStone cellUpdateStone) => 
             _deliveryQueue.Enqueue(cellUpdateStone);
 
-        public void StartDistribute()
-        {
+        public void StartDistribute() => 
             GiveOutStone();
-        }
 
         private void GiveOutNextStone()
         {
@@ -50,8 +48,11 @@ namespace ZombieVsMatch3.Gameplay.Match3
 
         private void GiveOutStone()
         {
+            if (_deliveryQueue.Count == 0)
+                return;
+            
             _currentCell = _deliveryQueue.Dequeue();
-            _currentCell.TakeStone(transform.position);
+            _currentCell.TakeStone(transform.position, _currentCell.Color);
             _rectStone = _currentCell.Stone.Rect;
         }
     }

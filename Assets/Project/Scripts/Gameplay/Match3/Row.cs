@@ -11,10 +11,13 @@ namespace ZombieVsMatch3.Gameplay.Match3
 
         public List<CellUpdateStone> Cells => cells;
 
-        public void Initialize(IExchangeOfStonesService exchangeOfStonesService, FieldMatch3ActiveArea fieldMatch3ActiveArea)
+        public void Initialize(IExchangeOfStonesService exchangeOfStonesService, 
+            FieldMatch3ActiveArea fieldMatch3ActiveArea,
+            ICellsStateCheckService cellsStateCheckService)
         {
             foreach (CellUpdateStone cell in Cells)
             {
+                cell.Construct(cellsStateCheckService);
                 cell.ProcessingCellClick.Construct(exchangeOfStonesService);
                 cell.ProcessingCellClick.Subscribe(fieldMatch3ActiveArea);
             }

@@ -16,15 +16,18 @@ namespace ZombieVsMatch3.Gameplay.Match3
         public List<DistributorStones> Spawns => spawns;
         public List<Row> Rows => rows;
 
-        public void Initialize(IExchangeOfStonesService exchangeOfStonesService, ICellActivityCheckService cellActivityCheckService)
+        public FieldMatch3ActiveArea FieldMatch3ActiveArea => fieldMatch3ActiveArea;
+
+        public void Initialize(IExchangeOfStonesService exchangeOfStonesService,
+            ICellsStateCheckService cellsStateCheckService)
         {
             for (int i = 0; i < rows.Count; i++)
             {
                 spawns[i].Initialize();
                 
-                rows[i].Initialize(exchangeOfStonesService, fieldMatch3ActiveArea);
+                rows[i].Initialize(exchangeOfStonesService, fieldMatch3ActiveArea, cellsStateCheckService);
                 
-                fieldMatch3ActiveArea.Construct(exchangeOfStonesService, cellActivityCheckService);
+                fieldMatch3ActiveArea.Construct(exchangeOfStonesService, cellsStateCheckService);
             }
         }
     }

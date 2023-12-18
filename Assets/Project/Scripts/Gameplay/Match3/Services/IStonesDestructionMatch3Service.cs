@@ -4,6 +4,6 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
 {
     public interface IStonesDestructionMatch3Service : IService
     {
-        public void TryDestroy();
+        public void DestroyForms();
     }
 }

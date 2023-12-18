@@ -24,6 +24,9 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
                 
                 for (int x = 0; x < _fieldData.Width; x++)
                 {
+                    if (_fieldData.Cells[x, y].IsReadyForDestruction)
+                        continue;
+                    
                     Vector2Int idPosition = new Vector2Int(x, y);
                     
                     if (IsHorizontalConnection(idPosition, _fieldData.Cells[x, y].Color))
@@ -39,55 +42,56 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
 
         private void WriteStonesHorizontally(List<CellUpdateStone> cells, in Vector2Int idPosition)
         {
-            if (_fieldData.Cells[idPosition.x, idPosition.y].IsReadyForDestruction)
-                return;
-            
             Color startColor = _fieldData.Cells[idPosition.x, idPosition.y].Color;
-            cells.Add(_fieldData.Cells[idPosition.x, idPosition.y]);
+            MarkingCell(cells, _fieldData.Cells[idPosition.x, idPosition.y]);
 
             for (int x = idPosition.x - 1; x >= 0; x--)
             {
-                if (_fieldData.Cells[x, idPosition.y].Color != startColor)
+                if (!IsIdenticalColors(_fieldData.Cells[x, idPosition.y].Color, startColor))
                     break;
 
-                _fieldData.Cells[x, idPosition.y].MarkingForDestruction();
-                cells.Add(_fieldData.Cells[x, idPosition.y]);
+                MarkingCell(cells, _fieldData.Cells[x, idPosition.y]);
             }
             
             for (int x = idPosition.x + 1; x < _fieldData.Width; x++)
             {
-                if (_fieldData.Cells[x, idPosition.y].Color != startColor)
+                if (!IsIdenticalColors(_fieldData.Cells[x, idPosition.y].Color, startColor))
                     break;
 
-                _fieldData.Cells[x, idPosition.y].MarkingForDestruction();
-                cells.Add(_fieldData.Cells[x, idPosition.y]);
+                MarkingCell(cells, _fieldData.Cells[x, idPosition.y]);
             }
         }
         private void WriteStonesVertical(List<CellUpdateStone> cells, in Vector2Int idPosition)
         {
-            if (_fieldData.Cells[idPosition.x, idPosition.y].IsReadyForDestruction)
-                return;
-            
             Color startColor = _fieldData.Cells[idPosition.x, idPosition.y].Color;
-            cells.Add(_fieldData.Cells[idPosition.x, idPosition.y]);
+            MarkingCell(cells, _fieldData.Cells[idPosition.x, idPosition.y]);
 
             for (int y = idPosition.y - 1; y >= 0; y--)
             {
-                if (_fieldData.Cells[idPosition.x, y].Color != startColor)
+                if (!IsIdenticalColors(_fieldData.Cells[idPosition.x, y].Color, startColor))
                     break;
 
-                _fieldData.Cells[idPosition.x, y].MarkingForDestruction();
-                cells.Add(_fieldData.Cells[idPosition.x, y]);
+                MarkingCell(cells, _fieldData.Cells[idPosition.x, y]);
             }
             
-            for (int y = idPosition.x + 1; y < _fieldData.Height; y++)
+            for (int y = idPosition.y + 1; y < _fieldData.Height; y++)
             {
-                if (_fieldData.Cells[idPosition.x, y].Color != startColor)
+                if (!IsIdenticalColors(_fieldData.Cells[idPosition.x, y].Color, startColor))
                     break;
 
-                _fieldData.Cells[idPosition.x, y].MarkingForDestruction();
-                cells.Add(_fieldData.Cells[idPosition.x, y]);
+                MarkingCell(cells, _fieldData.Cells[idPosition.x, y]);
             }
+        }
+
+        private void MarkingCell(List<CellUpdateStone> cells, CellUpdateStone cellMark)
+        {
+            cellMark.MarkingForDestruction();
+            cells.Add(cellMark);
+        }
+
+        private bool IsIdenticalColors(Color color1, Color color2)
+        {
+            return color1 == color2;
         }
 
         public bool IsFormAssembled(in Vector2Int idPosition, in Color color)

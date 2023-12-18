@@ -9,8 +9,6 @@ using ZombieVsMatch3.Core.Services.GameStateMachine;
 using ZombieVsMatch3.Core.Services.GameStateMachine.States;
 using ZombieVsMatch3.Core.Services.Progress;
 using ZombieVsMatch3.Core.Services.Scene;
-using ZombieVsMatch3.Gameplay.Match3;
-using ZombieVsMatch3.Gameplay.Match3.Services;
 using ZombieVsMatch3.UI;
 
 namespace ZombieVsMatch3.Core.Initialize
@@ -38,43 +36,29 @@ namespace ZombieVsMatch3.Core.Initialize
 
         private void RegisterServices(GameData gameData)
         {
-            GameStateMachine gameStateMachine = new GameStateMachine(gameData);
+            GameStateMachine gameStateMachine = new GameStateMachine();
             
-            gameData.ServicesContainer.Register<IProgressProviderService>(new ProgressProviderService(gameStateMachine));
-            gameData.ServicesContainer.Register<IRealtimeProgressService>(new RealtimeProgressService());
+            _servicesContainer.Register<IProgressProviderService>(new ProgressProviderService(gameStateMachine));
+            _servicesContainer.Register<IRealtimeProgressService>(new RealtimeProgressService());
             
-            gameData.ServicesContainer.Register<IAssetProvider>(new AssetProvider());
-            gameData.ServicesContainer.Register<IUIFactory>(new UIFactory(
+            _servicesContainer.Register<IAssetProvider>(new AssetProvider());
+            _servicesContainer.Register<IUIFactory>(new UIFactory(
                 _servicesContainer.Single<IAssetProvider>()));
-            gameData.ServicesContainer.Register<IGameplayFactory>(new GameplayFactory(
+            _servicesContainer.Register<IGameplayFactory>(new GameplayFactory(
                 _servicesContainer.Single<IAssetProvider>()));
 
-            gameData.ServicesContainer.Register<IDefiningConnectionsMatch3Service>(
-                new DefiningConnectionsMatch3Service());
-            gameData.ServicesContainer.Register<ICellActivityCheckService>(new CellActivityCheckService());
-            gameData.ServicesContainer.Register<IStonesDestructionMatch3Service>(new StonesDestructionMatch3Service(
-                _servicesContainer.Single<ICellActivityCheckService>(),
-                _servicesContainer.Single<IDefiningConnectionsMatch3Service>(),
-                gameData.CoroutinesContainer));
-            gameData.ServicesContainer.Register<IExchangeOfStonesService>(new ExchangeOfStonesService(
-                _servicesContainer.Single<IDefiningConnectionsMatch3Service>(),
-                _servicesContainer.Single<IStonesDestructionMatch3Service>()));
-            gameData.ServicesContainer.Register<IFillingCellsMatch3Service>(new FillingCellsMatch3Service(
-                _servicesContainer.Single<IDefiningConnectionsMatch3Service>(),
-                _servicesContainer.Single<ICellActivityCheckService>(),
-                _servicesContainer.Single<IStonesDestructionMatch3Service>()));
-
-            gameData.ServicesContainer.Register<ISceneProviderService>(new SceneProviderService(
+            _servicesContainer.Register<ISceneProviderService>(new SceneProviderService(
                 gameStateMachine,
+                _servicesContainer,
                 _servicesContainer.Single<IUIFactory>(),
-                _servicesContainer.Single<IGameplayFactory>(),
-                _servicesContainer.Single<IFillingCellsMatch3Service>(),
-                _servicesContainer.Single<ICellActivityCheckService>(),
-                _servicesContainer.Single<IExchangeOfStonesService>()));
+                _servicesContainer.Single<IGameplayFactory>()));
 
-            gameStateMachine.Initialize();
+            gameStateMachine.Initialize(
+                _servicesContainer.Single<IProgressProviderService>(),
+                gameData.CoroutinesContainer,
+                gameData.Curtain);
             _servicesContainer.Single<ISceneProviderService>().LoadMainScene();
-            gameData.ServicesContainer.Register<IGameStateMachine>(gameStateMachine);
+            _servicesContainer.Register<IGameStateMachine>(gameStateMachine);
         }
 
         private GameData GameDataCreate(LoadingCurtain curtain, ServicesContainer servicesContainer)
