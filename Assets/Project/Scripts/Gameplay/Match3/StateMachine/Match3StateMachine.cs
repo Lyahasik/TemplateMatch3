@@ -25,8 +25,7 @@ namespace ZombieVsMatch3.Gameplay.Match3.StateMachine
                 [typeof(FillingState)] = new FillingState(fillingCellsMatch3Service),
                 [typeof(SelectionState)] = new SelectionState(fieldMatch3ActiveArea),
                 [typeof(SwappingState)] = new SwappingState(exchangeOfStonesService),
-                [typeof(DestructionState)] = new DestructionState(stonesDestructionMatch3Service),
-                [typeof(StopState)] = new StopState()
+                [typeof(DestructionState)] = new DestructionState(stonesDestructionMatch3Service)
             };
         }
         

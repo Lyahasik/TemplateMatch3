@@ -6,10 +6,8 @@ using ZombieVsMatch3.Core.Services.Factories.Gameplay;
 using ZombieVsMatch3.Core.Services.Factories.UI;
 using ZombieVsMatch3.Core.Services.GameStateMachine;
 using ZombieVsMatch3.Core.Services.GameStateMachine.States;
-using ZombieVsMatch3.Gameplay.Match3;
+using ZombieVsMatch3.Gameplay;
 using ZombieVsMatch3.Gameplay.Match3.StateMachine;
-using ZombieVsMatch3.Gameplay.Match3.Services;
-using ZombieVsMatch3.Gameplay.Match3.StateMachine.States;
 using ZombieVsMatch3.UI;
 
 namespace ZombieVsMatch3.Core.Services.Scene
@@ -19,10 +17,10 @@ namespace ZombieVsMatch3.Core.Services.Scene
         private const string SceneMainMenuName = "MainMenu";
 
         private readonly IGameStateMachine _gameStateMachine;
-        private readonly ServicesContainer _servicesContainer;
         private readonly IUIFactory _uiFactory;
         private readonly IGameplayFactory _gameplayFactory;
-
+        
+        private ServicesContainer _match3ServicesContainer;
         private Match3StateMachine _match3StateMachine;
         
         private string _nameNewActiveScene;
@@ -30,12 +28,10 @@ namespace ZombieVsMatch3.Core.Services.Scene
         private bool _isMainMenuInit;
 
         public SceneProviderService(IGameStateMachine gameStateMachine,
-            ServicesContainer servicesContainer,
             IUIFactory uiFactory,
             IGameplayFactory gameplayFactory)
         {
             _gameStateMachine = gameStateMachine;
-            _servicesContainer = servicesContainer;
             _uiFactory = uiFactory;
             _gameplayFactory = gameplayFactory;
         }
@@ -96,65 +92,13 @@ namespace ZombieVsMatch3.Core.Services.Scene
             SceneManager.SetActiveScene(SceneManager.GetSceneByName(_nameNewActiveScene));
             Debug.Log("New active scene : " + SceneManager.GetActiveScene().name);
 
-            Hud hud = CreateHUD();
-            CreateMatch3(hud);
+            InitializerLevel  initializerLevel = new GameObject().AddComponent<InitializerLevel>();
+            initializerLevel.name = nameof(InitializerLevel);
+            initializerLevel.Construct(this, _gameplayFactory, _uiFactory);
+            initializerLevel.Initialize();
 
             Debug.Log("Level scene loaded.");
             _gameStateMachine.Enter<GameplayState>();
-        }
-
-        private void CreateMatch3(Hud hud)
-        {
-            RegisterServices();
-            hud.Match3StateMachine = _match3StateMachine;
-
-            FieldMatch3 fieldMatch3 = _gameplayFactory.CreateMatch3();
-            fieldMatch3.transform.SetParent(hud.transform, false);
-            fieldMatch3.Initialize(
-                _servicesContainer.Single<IExchangeOfStonesService>(),
-                _servicesContainer.Single<ICellsStateCheckService>());
-            
-            _match3StateMachine.Initialize(
-                _servicesContainer.Single<IFillingCellsMatch3Service>(),
-                fieldMatch3,
-                fieldMatch3.FieldMatch3ActiveArea,
-                _servicesContainer.Single<IExchangeOfStonesService>(),
-                _servicesContainer.Single<IStonesDestructionMatch3Service>());
-            _match3StateMachine.Enter<StartFillingState>();
-        }
-
-        //TODO implement cleaning
-        private void RegisterServices()
-        {
-            if (_match3StateMachine != null)
-                return;
-            
-            _match3StateMachine = new Match3StateMachine();
-
-            _servicesContainer.Register<IDefiningConnectionsMatch3Service>(
-                new DefiningConnectionsMatch3Service());
-            _servicesContainer.Register<ICellsStateCheckService>(new CellsStateCheckService());
-            _servicesContainer.Register<IStonesDestructionMatch3Service>(new StonesDestructionMatch3Service(
-                _match3StateMachine,
-                _servicesContainer.Single<ICellsStateCheckService>(),
-                _servicesContainer.Single<IDefiningConnectionsMatch3Service>()));
-            _servicesContainer.Register<IExchangeOfStonesService>(new ExchangeOfStonesService(
-                _match3StateMachine,
-                _servicesContainer.Single<IDefiningConnectionsMatch3Service>(),
-                _servicesContainer.Single<ICellsStateCheckService>()));
-            _servicesContainer.Register<IFillingCellsMatch3Service>(new FillingCellsMatch3Service(
-                _match3StateMachine,
-                _servicesContainer.Single<IDefiningConnectionsMatch3Service>(),
-                _servicesContainer.Single<ICellsStateCheckService>()));
-        }
-
-        private Hud CreateHUD()
-        {
-            Hud hud = _uiFactory.CreateHUD();
-            hud.Construct(this);
-            hud.Initialize();
-
-            return hud;
         }
     }
 }

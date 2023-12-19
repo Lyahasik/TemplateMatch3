@@ -49,7 +49,6 @@ namespace ZombieVsMatch3.Core.Initialize
 
             _servicesContainer.Register<ISceneProviderService>(new SceneProviderService(
                 gameStateMachine,
-                _servicesContainer,
                 _servicesContainer.Single<IUIFactory>(),
                 _servicesContainer.Single<IGameplayFactory>()));
 

@@ -22,5 +22,10 @@ namespace ZombieVsMatch3.Core.Services
             
             return null;
         }
+
+        public void Clear()
+        {
+            _services.Clear();
+        }
     }
 }
