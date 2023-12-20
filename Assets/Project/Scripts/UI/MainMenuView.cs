@@ -1,14 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+using ZombieVsMatch3.Constants;
 using ZombieVsMatch3.Core.Services.Scene;
 
 namespace ZombieVsMatch3.UI
 {
-    public class MainMenu : MonoBehaviour
+    public class MainMenuView : MonoBehaviour
     {
-        private const string SceneName = "Level1";
-
         private ISceneProviderService _sceneProviderService;
         
         [SerializeField] private Button buttonStartGame;
@@ -25,7 +24,7 @@ namespace ZombieVsMatch3.UI
 
         private void LoadLevel()
         {
-            _sceneProviderService.LoadLevel(SceneName);
+            _sceneProviderService.LoadLevel(ConstantValues.SCENE_NAME_LEVEL);
         }
     }
 }

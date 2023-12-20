@@ -2,10 +2,12 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+using ZombieVsMatch3.Constants;
 using ZombieVsMatch3.Core.Services.Factories.Gameplay;
 using ZombieVsMatch3.Core.Services.Factories.UI;
 using ZombieVsMatch3.Core.Services.GameStateMachine;
 using ZombieVsMatch3.Core.Services.GameStateMachine.States;
+using ZombieVsMatch3.Core.Services.StaticData;
 using ZombieVsMatch3.Gameplay;
 using ZombieVsMatch3.Gameplay.Match3.StateMachine;
 using ZombieVsMatch3.UI;
@@ -14,12 +16,11 @@ namespace ZombieVsMatch3.Core.Services.Scene
 {
     public class SceneProviderService : ISceneProviderService
     {
-        private const string SceneMainMenuName = "MainMenu";
-
         private readonly IGameStateMachine _gameStateMachine;
         private readonly IUIFactory _uiFactory;
         private readonly IGameplayFactory _gameplayFactory;
-        
+        private readonly IStaticDataService _staticDataService;
+
         private ServicesContainer _match3ServicesContainer;
         private Match3StateMachine _match3StateMachine;
         
@@ -29,11 +30,13 @@ namespace ZombieVsMatch3.Core.Services.Scene
 
         public SceneProviderService(IGameStateMachine gameStateMachine,
             IUIFactory uiFactory,
-            IGameplayFactory gameplayFactory)
+            IGameplayFactory gameplayFactory,
+            IStaticDataService staticDataService)
         {
             _gameStateMachine = gameStateMachine;
             _uiFactory = uiFactory;
             _gameplayFactory = gameplayFactory;
+            _staticDataService = staticDataService;
         }
 
         public void LoadMainScene()
@@ -48,7 +51,7 @@ namespace ZombieVsMatch3.Core.Services.Scene
                 return;
             }
 
-            LoadScene(SceneMainMenuName, PrepareMainMenuScene);
+            LoadScene(ConstantValues.SCENE_NAME_MAIN_MENU, PrepareMainMenuScene);
         }
 
         public void LoadLevel(string sceneName)
@@ -79,7 +82,7 @@ namespace ZombieVsMatch3.Core.Services.Scene
             SceneManager.UnloadSceneAsync(oldSceneName);
             Debug.Log("New active scene : " + SceneManager.GetActiveScene().name);
 
-            MainMenu mainMenu = _uiFactory.CreateMainMenu();
+            MainMenuView mainMenu = _uiFactory.CreateMainMenu();
             mainMenu.Construct(this);
             mainMenu.Initialize();
             
@@ -94,7 +97,7 @@ namespace ZombieVsMatch3.Core.Services.Scene
 
             InitializerLevel  initializerLevel = new GameObject().AddComponent<InitializerLevel>();
             initializerLevel.name = nameof(InitializerLevel);
-            initializerLevel.Construct(this, _gameplayFactory, _uiFactory);
+            initializerLevel.Construct(this, _gameplayFactory, _uiFactory, _staticDataService.ForLevel());
             initializerLevel.Initialize();
 
             Debug.Log("Level scene loaded.");

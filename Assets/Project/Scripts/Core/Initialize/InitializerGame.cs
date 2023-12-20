@@ -2,13 +2,13 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 using ZombieVsMatch3.Core.Services;
-using ZombieVsMatch3.Core.Services.Assets;
 using ZombieVsMatch3.Core.Services.Factories.Gameplay;
 using ZombieVsMatch3.Core.Services.Factories.UI;
 using ZombieVsMatch3.Core.Services.GameStateMachine;
 using ZombieVsMatch3.Core.Services.GameStateMachine.States;
 using ZombieVsMatch3.Core.Services.Progress;
 using ZombieVsMatch3.Core.Services.Scene;
+using ZombieVsMatch3.Core.Services.StaticData;
 using ZombieVsMatch3.UI;
 
 namespace ZombieVsMatch3.Core.Initialize
@@ -21,36 +21,33 @@ namespace ZombieVsMatch3.Core.Initialize
         
         private void Awake()
         {
-            LoadingCurtain curtain = Instantiate(curtainPrefab);
-            curtain.name = curtainPrefab.name;
-
-            _servicesContainer = new ServicesContainer();
-
-            GameData gameData = GameDataCreate(curtain, _servicesContainer);
-            
-            RegisterServices(gameData);
+            RegisterServices();
             _servicesContainer.Single<IGameStateMachine>().Enter<LoadProgressState>();
-            
-            DontDestroyOnLoad(gameData);
         }
 
-        private void RegisterServices(GameData gameData)
+        private void RegisterServices()
         {
+            _servicesContainer = new ServicesContainer();
+
+            RegisterStaticDataService();
+
             GameStateMachine gameStateMachine = new GameStateMachine();
-            
             _servicesContainer.Register<IProgressProviderService>(new ProgressProviderService(gameStateMachine));
             _servicesContainer.Register<IRealtimeProgressService>(new RealtimeProgressService());
             
-            _servicesContainer.Register<IAssetProvider>(new AssetProvider());
             _servicesContainer.Register<IUIFactory>(new UIFactory(
-                _servicesContainer.Single<IAssetProvider>()));
+                _servicesContainer.Single<IStaticDataService>()));
             _servicesContainer.Register<IGameplayFactory>(new GameplayFactory(
-                _servicesContainer.Single<IAssetProvider>()));
+                _servicesContainer.Single<IStaticDataService>()));
 
             _servicesContainer.Register<ISceneProviderService>(new SceneProviderService(
                 gameStateMachine,
                 _servicesContainer.Single<IUIFactory>(),
-                _servicesContainer.Single<IGameplayFactory>()));
+                _servicesContainer.Single<IGameplayFactory>(),
+                _servicesContainer.Single<IStaticDataService>()));
+            
+            LoadingCurtain curtain = CreateLoadingCurtain();
+            GameData gameData = GameDataCreate(curtain, _servicesContainer);
 
             gameStateMachine.Initialize(
                 _servicesContainer.Single<IProgressProviderService>(),
@@ -58,6 +55,24 @@ namespace ZombieVsMatch3.Core.Initialize
                 gameData.Curtain);
             _servicesContainer.Single<ISceneProviderService>().LoadMainScene();
             _servicesContainer.Register<IGameStateMachine>(gameStateMachine);
+            
+            DontDestroyOnLoad(gameData);
+        }
+
+        private LoadingCurtain CreateLoadingCurtain()
+        {
+            LoadingCurtain curtain = Instantiate(curtainPrefab);
+            curtain.Construct(curtainPrefab.name,
+                _servicesContainer.Single<IStaticDataService>().ForUI());
+            
+            return curtain;
+        }
+
+        private void RegisterStaticDataService()
+        {
+            StaticDataService staticDataService = new StaticDataService();
+            staticDataService.Load();
+            _servicesContainer.Register<IStaticDataService>(staticDataService);
         }
 
         private GameData GameDataCreate(LoadingCurtain curtain, ServicesContainer servicesContainer)

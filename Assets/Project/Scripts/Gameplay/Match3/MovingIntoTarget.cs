@@ -1,18 +1,25 @@
 using System;
 using UnityEngine;
 
+using ZombieVsMatch3.Constants;
+using ZombieVsMatch3.Gameplay.StaticData;
+
 namespace ZombieVsMatch3.Gameplay.Match3
 {
     public class MovingIntoTarget : MonoBehaviour
     {
-        private const float MinDistance = 0.001f;
+        private Match3StaticData _match3StaticData;
         
         private Vector3 _targetPosition;
-        
-        [SerializeField] private float speed = 500f;
+
         private float _step;
 
         private event Action OnStop;
+
+        public void Construct(Match3StaticData match3StaticData)
+        {
+            _match3StaticData = match3StaticData;
+        }
         
         private void Update()
         {
@@ -35,10 +42,10 @@ namespace ZombieVsMatch3.Gameplay.Match3
 
         private void StepTowardsTarget()
         {
-            float step = speed * Time.deltaTime;
+            float step = _match3StaticData.speedStoneMovement * Time.deltaTime;
             transform.position = Vector3.MoveTowards(transform.position, _targetPosition, step);
 
-            if (Vector3.Distance(transform.position, _targetPosition) <= MinDistance)
+            if (Vector3.Distance(transform.position, _targetPosition) <= ConstantValues.MIN_DISTANCE)
                 enabled = false;
         }
     }

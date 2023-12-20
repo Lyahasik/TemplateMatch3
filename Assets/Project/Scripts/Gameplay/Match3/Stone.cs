@@ -2,6 +2,8 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
+using ZombieVsMatch3.Gameplay.StaticData;
+
 namespace ZombieVsMatch3.Gameplay.Match3
 {
     [RequireComponent(typeof(RectTransform))]
@@ -13,6 +15,11 @@ namespace ZombieVsMatch3.Gameplay.Match3
         private RectTransform _rect;
 
         public RectTransform Rect => _rect;
+
+        public void Initialize(Match3StaticData match3StaticData)
+        {
+            movingIntoTarget.Construct(match3StaticData);
+        }
 
         private void Awake()
         {

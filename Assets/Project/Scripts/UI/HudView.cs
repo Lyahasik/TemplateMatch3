@@ -5,7 +5,7 @@ using ZombieVsMatch3.Core.Services.Scene;
 
 namespace ZombieVsMatch3.UI
 {
-    public class Hud : MonoBehaviour
+    public class HudView : MonoBehaviour
     {
         [SerializeField] private Button buttonMenu;
 

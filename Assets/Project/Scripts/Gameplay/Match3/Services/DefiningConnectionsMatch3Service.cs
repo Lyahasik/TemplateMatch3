@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using ZombieVsMatch3.Constants;
+
 namespace ZombieVsMatch3.Gameplay.Match3.Services
 {
     public class DefiningConnectionsMatch3Service : IDefiningConnectionsMatch3Service
     {
-        private const int MaxNumberLackOfForm = 2;
-
         private FieldData _fieldData;
         
         public void Initialize(in FieldData fieldData)
@@ -129,7 +129,7 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
             {
                 if (_fieldData.Cells[x, idPosition.y].Color != color)
                     break;
-                if (number == MaxNumberLackOfForm)
+                if (number == ConstantValues.MAX_NUMBER_LACK_OF_FORM)
                     return true;
 
                 number++;
@@ -139,7 +139,7 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
             {
                 if (_fieldData.Cells[x, idPosition.y].Color != color)
                     break;
-                if (number == MaxNumberLackOfForm)
+                if (number == ConstantValues.MAX_NUMBER_LACK_OF_FORM)
                     return true;
 
                 number++;
@@ -156,7 +156,7 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
             {
                 if (_fieldData.Cells[idPosition.x, y].Color != color)
                     break;
-                if (number == MaxNumberLackOfForm)
+                if (number == ConstantValues.MAX_NUMBER_LACK_OF_FORM)
                     return true;
 
                 number++;
@@ -166,7 +166,7 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
             {
                 if (_fieldData.Cells[idPosition.x, y].Color != color)
                     break;
-                if (number == MaxNumberLackOfForm)
+                if (number == ConstantValues.MAX_NUMBER_LACK_OF_FORM)
                     return true;
 
                 number++;

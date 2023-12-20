@@ -1,9 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-using ZombieVsMatch3.Gameplay.Match3.Services;
-
-namespace ZombieVsMatch3.Gameplay.Match3
+namespace ZombieVsMatch3.Gameplay.Match3.Services
 {
     public class CellsStateCheckService : ICellsStateCheckService
     {

@@ -2,15 +2,23 @@ using System.Collections;
 using UnityEngine;
 
 using ZombieVsMatch3.Core.Coroutines;
+using ZombieVsMatch3.UI.StaticData;
 
 namespace ZombieVsMatch3.UI
 {
     public class LoadingCurtain : MonoBehaviour
     {
-        private const float AlphaReductionStep = 0.03f;
-        private const float StepReductionTime = 0.03f;
-        
         [SerializeField] private CanvasGroup curtain;
+        
+        private UIStaticData _uiStaticData;
+
+        private WaitForSeconds _dissolutionDelay;
+
+        public void Construct(string newName, UIStaticData uiStaticData)
+        {
+            name = newName;
+            _uiStaticData = uiStaticData;
+        }
 
         private void Awake()
         {
@@ -28,10 +36,12 @@ namespace ZombieVsMatch3.UI
 
         private IEnumerator DoFadeIn()
         {
+            _dissolutionDelay ??= new WaitForSeconds(_uiStaticData.curtainDissolutionDelay);
+            
             while (curtain.alpha > 0)
             {
-                curtain.alpha -= AlphaReductionStep;
-                yield return new WaitForSeconds(StepReductionTime);
+                curtain.alpha -= _uiStaticData.curtainDissolutionStep;
+                yield return _dissolutionDelay;
             }
       
             gameObject.SetActive(false);

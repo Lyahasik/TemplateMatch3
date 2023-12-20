@@ -1,5 +1,8 @@
 using UnityEngine;
 
+using ZombieVsMatch3.Gameplay.Match3.Services;
+using ZombieVsMatch3.Gameplay.StaticData;
+
 namespace ZombieVsMatch3.Gameplay.Match3
 {
     public class CellUpdateStone : MonoBehaviour
@@ -32,6 +35,11 @@ namespace ZombieVsMatch3.Gameplay.Match3
         public void Construct(ICellsStateCheckService cellsStateCheckService)
         {
             _cellsStateCheckService = cellsStateCheckService;
+        }
+
+        public void Initialize(Match3StaticData match3StaticData)
+        {
+            stone.Initialize(match3StaticData);
         }
 
         public void SetColor(Color color) => 

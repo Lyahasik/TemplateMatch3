@@ -8,6 +8,7 @@ using ZombieVsMatch3.Gameplay.Match3;
 using ZombieVsMatch3.Gameplay.Match3.Services;
 using ZombieVsMatch3.Gameplay.Match3.StateMachine;
 using ZombieVsMatch3.Gameplay.Match3.StateMachine.States;
+using ZombieVsMatch3.Gameplay.StaticData;
 using ZombieVsMatch3.UI;
 
 namespace ZombieVsMatch3.Gameplay
@@ -15,9 +16,10 @@ namespace ZombieVsMatch3.Gameplay
     public class InitializerLevel : MonoBehaviour
     {
         private ISceneProviderService _sceneProviderService;
-        private IUIFactory _uiFactory;
         private IGameplayFactory _gameplayFactory;
-        
+        private IUIFactory _uiFactory;
+        private LevelStaticData _levelStaticData;
+
         private ServicesContainer _match3ServicesContainer;
         private Match3StateMachine _match3StateMachine;
 
@@ -28,37 +30,40 @@ namespace ZombieVsMatch3.Gameplay
 
         public void Construct(ISceneProviderService sceneProviderService,
             IGameplayFactory gameplayFactory,
-            IUIFactory uiFactory)
+            IUIFactory uiFactory,
+            LevelStaticData levelStaticData)
         {
             _sceneProviderService = sceneProviderService;
             _gameplayFactory = gameplayFactory;
             _uiFactory = uiFactory;
+            _levelStaticData = levelStaticData;
         }
 
         public void Initialize()
         {
-            Hud hud = CreateHUD();
-            CreateMatch3(hud);
+            HudView hudView = CreateHUD();
+            CreateMatch3(hudView);
         }
 
-        private Hud CreateHUD()
+        private HudView CreateHUD()
         {
-            Hud hud = _uiFactory.CreateHUD();
-            hud.Construct(_sceneProviderService);
-            hud.Initialize();
+            HudView hudView = _uiFactory.CreateHUD();
+            hudView.Construct(_sceneProviderService);
+            hudView.Initialize();
 
-            return hud;
+            return hudView;
         }
 
-        private void CreateMatch3(Hud hud)
+        private void CreateMatch3(HudView hudView)
         {
             RegisterMatch3Services();
 
             FieldMatch3 fieldMatch3 = _gameplayFactory.CreateMatch3();
-            fieldMatch3.transform.SetParent(hud.transform, false);
+            fieldMatch3.transform.SetParent(hudView.transform, false);
             fieldMatch3.Initialize(
                 _match3ServicesContainer.Single<IExchangeOfStonesService>(),
-                _match3ServicesContainer.Single<ICellsStateCheckService>());
+                _match3ServicesContainer.Single<ICellsStateCheckService>(),
+                _levelStaticData.match3Data);
             
             _match3StateMachine.Initialize(
                 _match3ServicesContainer.Single<IFillingCellsMatch3Service>(),

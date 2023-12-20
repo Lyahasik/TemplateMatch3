@@ -1,29 +1,35 @@
-using ZombieVsMatch3.Core.Services.Assets;
+using UnityEngine;
+
+using ZombieVsMatch3.Core.Services.StaticData;
+using ZombieVsMatch3.Gameplay.StaticData;
+using ZombieVsMatch3.MainMenu.StaticData;
 using ZombieVsMatch3.UI;
 
 namespace ZombieVsMatch3.Core.Services.Factories.UI
 {
     public class UIFactory : IUIFactory
     {
-        private readonly IAssetProvider _assetProvider;
+        private readonly IStaticDataService _staticDataService;
 
-        public UIFactory(IAssetProvider assetProvider)
+        public UIFactory(IStaticDataService staticDataService)
         {
-            _assetProvider = assetProvider;
+            _staticDataService = staticDataService;
         }
 
-        public MainMenu CreateMainMenu()
+        public MainMenuView CreateMainMenu()
         {
-            MainMenu mainMenu = _assetProvider.Instantiate(AssetPath.UIMainMenu).GetComponent<MainMenu>();
+            MainMenuStaticData mainMenuData = _staticDataService.ForMainMenu();
+            MainMenuView mainMenu = Object.Instantiate(mainMenuData.mainMenuViewPrefab);
 
             return mainMenu;
         }
 
-        public Hud CreateHUD()
+        public HudView CreateHUD()
         {
-            Hud hud = _assetProvider.Instantiate(AssetPath.UIHUD).GetComponent<Hud>();
+            LevelStaticData levelData = _staticDataService.ForLevel();
+            HudView hudView = Object.Instantiate(levelData.hudViewPrefab);
 
-            return hud;
+            return hudView;
         }
     }
 }
