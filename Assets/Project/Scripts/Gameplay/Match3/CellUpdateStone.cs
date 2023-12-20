@@ -1,6 +1,8 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 using ZombieVsMatch3.Gameplay.Match3.Services;
+using ZombieVsMatch3.Gameplay.Match3.Stones;
 using ZombieVsMatch3.Gameplay.StaticData;
 
 namespace ZombieVsMatch3.Gameplay.Match3
@@ -9,10 +11,11 @@ namespace ZombieVsMatch3.Gameplay.Match3
     {
         [SerializeField] private ProcessingCellClick processingCellClick;
         [SerializeField] private Stone stone;
+        [SerializeField] private Image selectionImage;
 
         private ICellsStateCheckService _cellsStateCheckService;
         
-        private Color _currentColor;
+        private StoneData _currentStoneData;
         private Vector2Int _idPosition;
 
         private bool _isLock;
@@ -21,7 +24,7 @@ namespace ZombieVsMatch3.Gameplay.Match3
         public ProcessingCellClick ProcessingCellClick => processingCellClick;
         public Stone Stone => stone;
         
-        public Color Color => _currentColor;
+        public StoneData StoneData => _currentStoneData;
 
         public Vector2Int IdPosition
         {
@@ -37,31 +40,29 @@ namespace ZombieVsMatch3.Gameplay.Match3
             _cellsStateCheckService = cellsStateCheckService;
         }
 
-        public void Initialize(Match3StaticData match3StaticData)
-        {
+        public void Initialize(Match3StaticData match3StaticData) => 
             stone.Initialize(match3StaticData);
-        }
 
-        public void SetColor(Color color) => 
-            _currentColor = color;
-
-        public void Select()
+        public void SetStoneData(in StoneData stoneData)
         {
-            stone.SetColor(Color.black);
+            Deselect();
+            _currentStoneData = stoneData;
         }
 
-        public void Deselect()
-        {
-            stone.SetColor(_currentColor);
-        }
+        public void Select() => 
+            selectionImage.enabled = true;
 
-        public void TakeStone(Vector3 dispensingPosition, in Color color)
+        public void Deselect() => 
+            selectionImage.enabled = false;
+
+        public void TakeStone(Vector3 dispensingPosition, in StoneData stoneData)
         {
             _isLock = true;
             _cellsStateCheckService.AddProcessingCell();
-
-            _currentColor = color;
-            stone.SetColor(_currentColor);
+            
+            Deselect();
+            _currentStoneData = stoneData;
+            stone.SetSprite(_currentStoneData.sprite);
             stone.StartMovingIntoCell(dispensingPosition, transform.position, StoneReceived);
         }
 
@@ -74,8 +75,8 @@ namespace ZombieVsMatch3.Gameplay.Match3
 
         public void DestroyStone()
         {
-            _currentColor = Color.clear;
-            stone.SetColor(_currentColor);
+            _currentStoneData = StoneData.Empty;
+            stone.Destroy();
 
             _isLock = false;
             _isReadyForDestruction = false;

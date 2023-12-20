@@ -93,7 +93,8 @@ namespace ZombieVsMatch3.Gameplay
             _match3ServicesContainer.Register<IFillingCellsMatch3Service>(new FillingCellsMatch3Service(
                 _match3StateMachine,
                 _match3ServicesContainer.Single<IDefiningConnectionsMatch3Service>(),
-                _match3ServicesContainer.Single<ICellsStateCheckService>()));
+                _match3ServicesContainer.Single<ICellsStateCheckService>(),
+                _levelStaticData.match3Data.stones));
         }
 
         private void ClearMatch3Services()

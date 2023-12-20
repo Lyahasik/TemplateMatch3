@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-using ZombieVsMatch3.Gameplay.Match3;
+using ZombieVsMatch3.Gameplay.Match3.Stones;
 
 namespace ZombieVsMatch3.Project.Scripts.Editor
 {

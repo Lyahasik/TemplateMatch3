@@ -1,6 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
+using ZombieVsMatch3.Gameplay.Match3.Stones;
+
 namespace ZombieVsMatch3.Gameplay.Match3.Services
 {
     public class CellsStateCheckService : ICellsStateCheckService
@@ -48,7 +50,7 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
 
             foreach (CellUpdateStone cell in _fieldData.Cells)
             {
-                if (cell.Color == Color.clear)
+                if (cell.StoneData.type == StoneType.Empty)
                     return false;
             }
 

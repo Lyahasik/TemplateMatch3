@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using ZombieVsMatch3.Constants;
+using ZombieVsMatch3.Gameplay.Match3.Stones;
 
 namespace ZombieVsMatch3.Gameplay.Match3.Services
 {
@@ -29,10 +30,10 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
                     
                     Vector2Int idPosition = new Vector2Int(x, y);
                     
-                    if (IsHorizontalConnection(idPosition, _fieldData.Cells[x, y].Color))
+                    if (IsHorizontalConnection(idPosition, _fieldData.Cells[x, y].StoneData.type))
                         WriteStonesHorizontally(cells, idPosition);
                     
-                    if (IsVerticalConnection(idPosition, _fieldData.Cells[x, y].Color))
+                    if (IsVerticalConnection(idPosition, _fieldData.Cells[x, y].StoneData.type))
                         WriteStonesVertical(cells, idPosition);
                 }
             }
@@ -42,12 +43,12 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
 
         private void WriteStonesHorizontally(List<CellUpdateStone> cells, in Vector2Int idPosition)
         {
-            Color startColor = _fieldData.Cells[idPosition.x, idPosition.y].Color;
+            StoneType startType = _fieldData.Cells[idPosition.x, idPosition.y].StoneData.type;
             MarkingCell(cells, _fieldData.Cells[idPosition.x, idPosition.y]);
 
             for (int x = idPosition.x - 1; x >= 0; x--)
             {
-                if (!IsIdenticalColors(_fieldData.Cells[x, idPosition.y].Color, startColor))
+                if (!IsIdenticalStoneTypes(_fieldData.Cells[x, idPosition.y].StoneData.type, startType))
                     break;
 
                 MarkingCell(cells, _fieldData.Cells[x, idPosition.y]);
@@ -55,7 +56,7 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
             
             for (int x = idPosition.x + 1; x < _fieldData.Width; x++)
             {
-                if (!IsIdenticalColors(_fieldData.Cells[x, idPosition.y].Color, startColor))
+                if (!IsIdenticalStoneTypes(_fieldData.Cells[x, idPosition.y].StoneData.type, startType))
                     break;
 
                 MarkingCell(cells, _fieldData.Cells[x, idPosition.y]);
@@ -63,12 +64,12 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
         }
         private void WriteStonesVertical(List<CellUpdateStone> cells, in Vector2Int idPosition)
         {
-            Color startColor = _fieldData.Cells[idPosition.x, idPosition.y].Color;
+            StoneType startType = _fieldData.Cells[idPosition.x, idPosition.y].StoneData.type;
             MarkingCell(cells, _fieldData.Cells[idPosition.x, idPosition.y]);
 
             for (int y = idPosition.y - 1; y >= 0; y--)
             {
-                if (!IsIdenticalColors(_fieldData.Cells[idPosition.x, y].Color, startColor))
+                if (!IsIdenticalStoneTypes(_fieldData.Cells[idPosition.x, y].StoneData.type, startType))
                     break;
 
                 MarkingCell(cells, _fieldData.Cells[idPosition.x, y]);
@@ -76,7 +77,7 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
             
             for (int y = idPosition.y + 1; y < _fieldData.Height; y++)
             {
-                if (!IsIdenticalColors(_fieldData.Cells[idPosition.x, y].Color, startColor))
+                if (!IsIdenticalStoneTypes(_fieldData.Cells[idPosition.x, y].StoneData.type, startType))
                     break;
 
                 MarkingCell(cells, _fieldData.Cells[idPosition.x, y]);
@@ -89,45 +90,45 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
             cells.Add(cellMark);
         }
 
-        private bool IsIdenticalColors(Color color1, Color color2)
+        private bool IsIdenticalStoneTypes(StoneType type1, StoneType type2)
         {
-            return color1 == color2;
+            return type1 == type2;
         }
 
-        public bool IsFormAssembled(in Vector2Int idPosition, in Color color)
+        public bool IsFormAssembled(in Vector2Int idPosition, in StoneType type)
         {
-            if (IsHorizontalConnection(idPosition, color)
-                || IsVerticalConnection(idPosition, color))
+            if (IsHorizontalConnection(idPosition, type)
+                || IsVerticalConnection(idPosition, type))
                 return true;
 
             return false;
         }
 
-        public bool IsNeighboringCells(Vector2Int idPositionCell1, Vector2Int idPositionCell2)
+        public bool IsNeighboringCells(in Vector2Int idPositionCell1, in Vector2Int idPositionCell2)
         {
             return IsNeighboringHorizontal(idPositionCell1, idPositionCell2)
                 || IsNeighboringVertical(idPositionCell1, idPositionCell2);
         }
 
-        private bool IsNeighboringHorizontal(Vector2Int idPositionCell1, Vector2Int idPositionCell2)
+        private bool IsNeighboringHorizontal(in Vector2Int idPositionCell1, in Vector2Int idPositionCell2)
         {
             return idPositionCell1.y == idPositionCell2.y
                     && (idPositionCell1.x - 1 == idPositionCell2.x || idPositionCell1.x + 1 == idPositionCell2.x);
         }
 
-        private bool IsNeighboringVertical(Vector2Int idPositionCell1, Vector2Int idPositionCell2)
+        private bool IsNeighboringVertical(in Vector2Int idPositionCell1, in Vector2Int idPositionCell2)
         {
             return idPositionCell1.x == idPositionCell2.x
                     && (idPositionCell1.y - 1 == idPositionCell2.y || idPositionCell1.y + 1 == idPositionCell2.y);
         }
 
-        private bool IsHorizontalConnection(in Vector2Int idPosition, in Color color)
+        private bool IsHorizontalConnection(in Vector2Int idPosition, in StoneType type)
         {
             int number = 1;
 
             for (int x = idPosition.x - 1; x >= 0; x--)
             {
-                if (_fieldData.Cells[x, idPosition.y].Color != color)
+                if (_fieldData.Cells[x, idPosition.y].StoneData.type != type)
                     break;
                 if (number == ConstantValues.MAX_NUMBER_LACK_OF_FORM)
                     return true;
@@ -137,7 +138,7 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
             
             for (int x = idPosition.x + 1; x < _fieldData.Width; x++)
             {
-                if (_fieldData.Cells[x, idPosition.y].Color != color)
+                if (_fieldData.Cells[x, idPosition.y].StoneData.type != type)
                     break;
                 if (number == ConstantValues.MAX_NUMBER_LACK_OF_FORM)
                     return true;
@@ -148,13 +149,13 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
             return false;
         }
 
-        private bool IsVerticalConnection(in Vector2Int idPosition, in Color color)
+        private bool IsVerticalConnection(in Vector2Int idPosition, in StoneType type)
         {
             int number = 1;
 
             for (int y = idPosition.y - 1; y >= 0; y--)
             {
-                if (_fieldData.Cells[idPosition.x, y].Color != color)
+                if (_fieldData.Cells[idPosition.x, y].StoneData.type != type)
                     break;
                 if (number == ConstantValues.MAX_NUMBER_LACK_OF_FORM)
                     return true;
@@ -164,7 +165,7 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
             
             for (int y = idPosition.y + 1; y < _fieldData.Height; y++)
             {
-                if (_fieldData.Cells[idPosition.x, y].Color != color)
+                if (_fieldData.Cells[idPosition.x, y].StoneData.type != type)
                     break;
                 if (number == ConstantValues.MAX_NUMBER_LACK_OF_FORM)
                     return true;

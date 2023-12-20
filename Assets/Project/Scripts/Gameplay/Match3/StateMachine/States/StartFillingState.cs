@@ -21,7 +21,6 @@ namespace ZombieVsMatch3.Gameplay.Match3.StateMachine.States
         {
             Debug.Log($"Start state { GetType().Name }");
             
-            _fillingCellsMatch3Service.Initialize();
             _fillingCellsMatch3Service.FirstFilling(_fieldMatch3);
         }
 

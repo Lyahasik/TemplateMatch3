@@ -1,10 +1,9 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-
 using ZombieVsMatch3.Gameplay.StaticData;
 
-namespace ZombieVsMatch3.Gameplay.Match3
+namespace ZombieVsMatch3.Gameplay.Match3.Stones
 {
     [RequireComponent(typeof(RectTransform))]
     public class Stone : MonoBehaviour
@@ -26,8 +25,14 @@ namespace ZombieVsMatch3.Gameplay.Match3
             _rect = GetComponent<RectTransform>();
         }
 
-        public void SetColor(Color color) => 
-            icon.color = color;
+        public void SetSprite(Sprite sprite)
+        {
+            icon.enabled = true;
+            icon.sprite = sprite;
+        }
+
+        public void Destroy() =>
+            icon.enabled = false;
 
         public void StartMovingIntoCell(in Vector3 dispensingPosition, in Vector3 targetPosition, in Action onStop) => 
             movingIntoTarget.StartMoving(dispensingPosition, targetPosition, onStop);

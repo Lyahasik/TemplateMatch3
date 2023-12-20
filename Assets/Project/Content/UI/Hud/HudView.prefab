@@ -4442,7 +4442,7 @@ GameObject:
   - component: {fileID: 7422564318213114615}
   - component: {fileID: 8248891911705102734}
   m_Layer: 5
-  m_Name: Hud
+  m_Name: HudView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

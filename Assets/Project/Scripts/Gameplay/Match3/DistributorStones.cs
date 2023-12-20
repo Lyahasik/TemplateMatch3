@@ -52,7 +52,7 @@ namespace ZombieVsMatch3.Gameplay.Match3
                 return;
             
             _currentCell = _deliveryQueue.Dequeue();
-            _currentCell.TakeStone(transform.position, _currentCell.Color);
+            _currentCell.TakeStone(transform.position, _currentCell.StoneData);
             _rectStone = _currentCell.Stone.Rect;
         }
     }

@@ -2,6 +2,7 @@
 
 using ZombieVsMatch3.Gameplay.Match3.StateMachine;
 using ZombieVsMatch3.Gameplay.Match3.StateMachine.States;
+using ZombieVsMatch3.Gameplay.Match3.Stones;
 
 namespace ZombieVsMatch3.Gameplay.Match3.Services
 {
@@ -47,10 +48,10 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
         {
             PrepareSwap();
             
-            Color oldSecondColor = _secondCellUpdateStone.Color;
+            StoneData oldSecondStoneData = _secondCellUpdateStone.StoneData;
             
-            _secondCellUpdateStone.TakeStone(_firstCellUpdateStone.transform.position, _firstCellUpdateStone.Color);
-            _firstCellUpdateStone.TakeStone(_secondCellUpdateStone.transform.position, oldSecondColor);
+            _secondCellUpdateStone.TakeStone(_firstCellUpdateStone.transform.position, _firstCellUpdateStone.StoneData);
+            _firstCellUpdateStone.TakeStone(_secondCellUpdateStone.transform.position, oldSecondStoneData);
 
             if (isBack)
                 Reset();
@@ -76,9 +77,9 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
         {
             Debug.Log("try start destroy");
             if (_definingConnectionsMatch3Service.IsFormAssembled(_firstCellUpdateStone.IdPosition,
-                    _firstCellUpdateStone.Color)
+                    _firstCellUpdateStone.StoneData.type)
                 || _definingConnectionsMatch3Service.IsFormAssembled(_secondCellUpdateStone.IdPosition,
-                    _secondCellUpdateStone.Color))
+                    _secondCellUpdateStone.StoneData.type))
             {
                 Reset();
                 _match3StateMachine.Enter<DestructionState>();

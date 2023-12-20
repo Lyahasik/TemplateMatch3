@@ -3,6 +3,7 @@ using UnityEngine;
 
 using ZombieVsMatch3.Gameplay.Match3.StateMachine;
 using ZombieVsMatch3.Gameplay.Match3.StateMachine.States;
+using ZombieVsMatch3.Gameplay.Match3.Stones;
 using Random = UnityEngine.Random;
 
 namespace ZombieVsMatch3.Gameplay.Match3.Services
@@ -12,26 +13,19 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
         private readonly IMatch3StateMachine _match3StateMachine;
         private readonly IDefiningConnectionsMatch3Service _definingConnectionsMatch3Service;
         private readonly ICellsStateCheckService _cellsStateCheckService;
+        private readonly List<StoneData> _stones;
 
         private FieldData _fieldData;
 
-        private List<Color> types;
-
         public FillingCellsMatch3Service(IMatch3StateMachine match3StateMachine,
             IDefiningConnectionsMatch3Service definingConnectionsMatch3Service,
-            ICellsStateCheckService cellsStateCheckService)
+            ICellsStateCheckService cellsStateCheckService,
+            List<StoneData> stones)
         {
             _match3StateMachine = match3StateMachine;
             _definingConnectionsMatch3Service = definingConnectionsMatch3Service;
             _cellsStateCheckService = cellsStateCheckService;
-        }
-
-        public void Initialize()
-        {
-            types = new();
-            types.Add(Color.blue);
-            types.Add(Color.green);
-            types.Add(Color.red);
+            _stones = stones;
         }
 
         public void FirstFilling(FieldMatch3 field)
@@ -54,19 +48,19 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
             {
                 for (int y = 0; y < _fieldData.Height; y++)
                 {
-                    if (_fieldData.Cells[x, y].Color != Color.clear)
+                    if (_fieldData.Cells[x, y].StoneData.type != StoneType.Empty)
                         continue;
                     
                     if (y < _fieldData.Height - 1)
                     {
                         for (int tempY = y + 1; tempY < _fieldData.Height; tempY++)
                         {
-                            if (_fieldData.Cells[x, tempY].Color == Color.clear)
+                            if (_fieldData.Cells[x, tempY].StoneData.type == StoneType.Empty)
                                 continue;
                                 
                             _fieldData.Cells[x, y].TakeStone(_fieldData.Cells[x, tempY].transform.position,
-                                _fieldData.Cells[x, tempY].Color);
-                            _fieldData.Cells[x, tempY].SetColor(Color.clear);
+                                _fieldData.Cells[x, tempY].StoneData);
+                            _fieldData.Cells[x, tempY].SetStoneData(StoneData.Empty);
 
                             break;
                         }
@@ -87,7 +81,7 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
                     CellUpdateStone cell = _fieldData.Cells[x, y];
                     Vector2Int position = new Vector2Int(x, y);
 
-                    if (_definingConnectionsMatch3Service.IsFormAssembled(in position, cell.Color))
+                    if (_definingConnectionsMatch3Service.IsFormAssembled(in position, cell.StoneData.type))
                     {
                         _match3StateMachine.Enter<DestructionState>();
                         return;
@@ -132,15 +126,15 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
                 {
                     CellUpdateStone cell = _fieldData.Cells[x, y];
                     
-                    if (cell.Color != Color.clear)
+                    if (cell.StoneData.type != StoneType.Empty)
                         continue;
                     
-                    int id = Random.Range(0, types.Count);
+                    int id = Random.Range(0, _stones.Count);
 
                     if (isFirstTime)
                         id = GetIdTakingIntoAccountForms(cell, ref id);
                     
-                    cell.SetColor(types[id]);
+                    cell.SetStoneData(_stones[id]);
                     _fieldData.Spawns[x].CellPuttingInQueueDelivery(cell);
                 }
             }
@@ -148,8 +142,8 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
 
         private int GetIdTakingIntoAccountForms(CellUpdateStone cell, ref int id)
         {
-            while (_definingConnectionsMatch3Service.IsFormAssembled(cell.IdPosition, types[id]))
-                id = Random.Range(0, types.Count);
+            while (_definingConnectionsMatch3Service.IsFormAssembled(cell.IdPosition, _stones[id].type))
+                id = Random.Range(0, _stones.Count);
 
             return id;
         }
