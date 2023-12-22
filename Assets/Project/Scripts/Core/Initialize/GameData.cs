@@ -2,7 +2,7 @@ using UnityEngine;
 
 using ZombieVsMatch3.Core.Coroutines;
 using ZombieVsMatch3.Core.Services;
-using ZombieVsMatch3.UI;
+using ZombieVsMatch3.UI.Loading;
 
 namespace ZombieVsMatch3.Core.Initialize
 {

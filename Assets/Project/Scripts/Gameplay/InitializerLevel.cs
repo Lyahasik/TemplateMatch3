@@ -9,7 +9,7 @@ using ZombieVsMatch3.Gameplay.Match3.Services;
 using ZombieVsMatch3.Gameplay.Match3.StateMachine;
 using ZombieVsMatch3.Gameplay.Match3.StateMachine.States;
 using ZombieVsMatch3.Gameplay.StaticData;
-using ZombieVsMatch3.UI;
+using ZombieVsMatch3.UI.Hud;
 
 namespace ZombieVsMatch3.Gameplay
 {
@@ -41,6 +41,8 @@ namespace ZombieVsMatch3.Gameplay
 
         public void Initialize()
         {
+            RegisterMatch3Services();
+                
             HudView hudView = CreateHUD();
             CreateMatch3(hudView);
         }
@@ -49,15 +51,15 @@ namespace ZombieVsMatch3.Gameplay
         {
             HudView hudView = _uiFactory.CreateHUD();
             hudView.Construct(_sceneProviderService);
-            hudView.Initialize();
+            hudView.Initialize(
+                _match3ServicesContainer.Single<IStoneCounterService>(),
+                _levelStaticData.match3Data);
 
             return hudView;
         }
 
         private void CreateMatch3(HudView hudView)
         {
-            RegisterMatch3Services();
-
             FieldMatch3 fieldMatch3 = _gameplayFactory.CreateMatch3();
             fieldMatch3.transform.SetParent(hudView.transform, false);
             fieldMatch3.Initialize(
@@ -82,10 +84,12 @@ namespace ZombieVsMatch3.Gameplay
             _match3ServicesContainer.Register<IDefiningConnectionsMatch3Service>(
                 new DefiningConnectionsMatch3Service());
             _match3ServicesContainer.Register<ICellsStateCheckService>(new CellsStateCheckService());
+            _match3ServicesContainer.Register<IStoneCounterService>(new StoneCounterService());
             _match3ServicesContainer.Register<IStonesDestructionMatch3Service>(new StonesDestructionMatch3Service(
                 _match3StateMachine,
                 _match3ServicesContainer.Single<ICellsStateCheckService>(),
-                _match3ServicesContainer.Single<IDefiningConnectionsMatch3Service>()));
+                _match3ServicesContainer.Single<IDefiningConnectionsMatch3Service>(),
+                _match3ServicesContainer.Single<IStoneCounterService>()));
             _match3ServicesContainer.Register<IExchangeOfStonesService>(new ExchangeOfStonesService(
                 _match3StateMachine,
                 _match3ServicesContainer.Single<IDefiningConnectionsMatch3Service>(),

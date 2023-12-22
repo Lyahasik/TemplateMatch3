@@ -10,14 +10,17 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
         private readonly IMatch3StateMachine _match3StateMachine;
         private readonly ICellsStateCheckService _cellsStateCheckService;
         private readonly IDefiningConnectionsMatch3Service _definingConnectionsMatch3Service;
+        private readonly IStoneCounterService _stoneCounterService;
 
         public StonesDestructionMatch3Service(IMatch3StateMachine match3StateMachine,
             ICellsStateCheckService cellsStateCheckService,
-            IDefiningConnectionsMatch3Service definingConnectionsMatch3Service)
+            IDefiningConnectionsMatch3Service definingConnectionsMatch3Service,
+            IStoneCounterService stoneCounterService)
         {
             _match3StateMachine = match3StateMachine;
             _cellsStateCheckService = cellsStateCheckService;
             _definingConnectionsMatch3Service = definingConnectionsMatch3Service;
+            _stoneCounterService = stoneCounterService;
         }
 
         public void DestroyForms()
@@ -27,6 +30,7 @@ namespace ZombieVsMatch3.Gameplay.Match3.Services
             
             foreach (CellUpdateStone cell in cells)
             {
+                _stoneCounterService.StoneDestroy(cell.StoneData.type);
                 cell.DestroyStone();
             }
         }

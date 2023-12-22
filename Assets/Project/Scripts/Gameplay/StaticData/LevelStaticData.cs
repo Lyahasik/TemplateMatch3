@@ -1,6 +1,6 @@
 using UnityEngine;
 
-using ZombieVsMatch3.UI;
+using ZombieVsMatch3.UI.Hud;
 
 namespace ZombieVsMatch3.Gameplay.StaticData
 {

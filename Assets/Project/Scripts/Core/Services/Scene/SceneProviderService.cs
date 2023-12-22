@@ -10,7 +10,7 @@ using ZombieVsMatch3.Core.Services.GameStateMachine.States;
 using ZombieVsMatch3.Core.Services.StaticData;
 using ZombieVsMatch3.Gameplay;
 using ZombieVsMatch3.Gameplay.Match3.StateMachine;
-using ZombieVsMatch3.UI;
+using ZombieVsMatch3.UI.MainMenu;
 
 namespace ZombieVsMatch3.Core.Services.Scene
 {

@@ -1,15 +1,16 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+using ZombieVsMatch3.Constants;
 using ZombieVsMatch3.Core.Services.Scene;
 
-namespace ZombieVsMatch3.UI
+namespace ZombieVsMatch3.UI.MainMenu
 {
-    public class HudView : MonoBehaviour
+    public class MainMenuView : MonoBehaviour
     {
-        [SerializeField] private Button buttonMenu;
-
         private ISceneProviderService _sceneProviderService;
+        
+        [SerializeField] private Button buttonStartGame;
 
         public void Construct(ISceneProviderService sceneProviderService)
         {
@@ -18,12 +19,12 @@ namespace ZombieVsMatch3.UI
 
         public void Initialize()
         {
-            buttonMenu.onClick.AddListener(LoadLevel);
+            buttonStartGame.onClick.AddListener(LoadLevel);
         }
-        
+
         private void LoadLevel()
         {
-            _sceneProviderService.LoadMainScene();
+            _sceneProviderService.LoadLevel(ConstantValues.SCENE_NAME_LEVEL);
         }
     }
 }

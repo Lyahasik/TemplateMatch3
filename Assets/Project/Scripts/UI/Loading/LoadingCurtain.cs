@@ -4,7 +4,7 @@ using UnityEngine;
 using ZombieVsMatch3.Core.Coroutines;
 using ZombieVsMatch3.UI.StaticData;
 
-namespace ZombieVsMatch3.UI
+namespace ZombieVsMatch3.UI.Loading
 {
     public class LoadingCurtain : MonoBehaviour
     {

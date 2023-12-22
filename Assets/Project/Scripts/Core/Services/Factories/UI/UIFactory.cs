@@ -3,7 +3,8 @@ using UnityEngine;
 using ZombieVsMatch3.Core.Services.StaticData;
 using ZombieVsMatch3.Gameplay.StaticData;
 using ZombieVsMatch3.MainMenu.StaticData;
-using ZombieVsMatch3.UI;
+using ZombieVsMatch3.UI.Hud;
+using ZombieVsMatch3.UI.MainMenu;
 
 namespace ZombieVsMatch3.Core.Services.Factories.UI
 {

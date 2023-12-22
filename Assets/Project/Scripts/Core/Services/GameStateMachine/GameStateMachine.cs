@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using ZombieVsMatch3.Core.Coroutines;
 using ZombieVsMatch3.Core.Services.GameStateMachine.States;
 using ZombieVsMatch3.Core.Services.Progress;
-using ZombieVsMatch3.UI;
+using ZombieVsMatch3.UI.Loading;
 
 namespace ZombieVsMatch3.Core.Services.GameStateMachine
 {
